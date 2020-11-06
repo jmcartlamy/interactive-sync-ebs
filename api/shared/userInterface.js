@@ -31,7 +31,7 @@ const userInterfaceHandler = async function (req) {
     } catch (err) {
         throw Boom.badRequest(STRINGS.sendUserInterfaceSyntaxError);
     }
-    
+
     const channelId = req.payload.channelId;
     // Set user interface in state
     setUserInterface(channelId, userInterface);
@@ -44,7 +44,10 @@ const userInterfaceHandler = async function (req) {
     try {
         verboseLog(STRINGS.newUserInterface, channelId);
         await apiTwitch.sendBroadcastMessage(channelId, message);
-        return req.payload;
+        return {
+            channelId,
+            userInterface,
+        };
     } catch (err) {
         verboseLog(err);
         return err;

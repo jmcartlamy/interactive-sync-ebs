@@ -3,11 +3,13 @@
  */
 module.exports.findCooldownByActionId = function (actionId, userInterface) {
     let cooldown = null;
-    if (userInterface.video_overlay) {
-        cooldown = _findCooldownByActionId(actionId, userInterface.video_overlay);
-    }
-    if (userInterface.panel) {
-        cooldown = _findCooldownByActionId(actionId, userInterface.panel);
+    if (userInterface) {
+        if (userInterface.video_overlay) {
+            cooldown = _findCooldownByActionId(actionId, userInterface.video_overlay);
+        }
+        if (userInterface.panel) {
+            cooldown = _findCooldownByActionId(actionId, userInterface.panel);
+        }
     }
     return cooldown;
 };
