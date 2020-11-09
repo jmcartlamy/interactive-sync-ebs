@@ -8,18 +8,17 @@ const attemptActionBroadcast = async function (channelId, actionCooldown, action
     // Check the cool-down to determine if it's okay to send now.
     const now = Date.now();
     const cooldown = getChannelCooldown(channelId);
+    // Send to broadcast twitch
+    const message = {
+        type: 'action',
+        data: {
+            actionId: actionId,
+            actionCooldown: actionCooldown || null,
+        },
+    };
     if (!cooldown || cooldown.time < now) {
         // It is.
         setChannelCooldown(channelId, { time: now + CONFIG.channelCooldownMs });
-
-        // Send to broadcast twitch
-        const message = {
-            type: 'action',
-            data: {
-                actionId: actionId,
-                actionCooldown: actionCooldown || null,
-            },
-        };
         try {
             verboseLog(STRINGS.actionBroadcast, actionId, actionCooldown, channelId);
             await apiTwitch.sendBroadcastMessage(channelId, message);
