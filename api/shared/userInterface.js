@@ -11,19 +11,6 @@ const { getUserInterface, setUserInterface } = require('../../config/state');
 const userInterfaceHandler = async function (req) {
     // TODO verify request JWT
 
-    // Verify request
-    if (!req.payload) {
-        throw Boom.badRequest(STRINGS.sendUserInterfacePayloadMissing);
-    }
-
-    if (
-        !req.payload.userInterface ||
-        !req.payload.channelId ||
-        typeof req.payload.userInterface !== 'string'
-    ) {
-        throw Boom.badRequest(STRINGS.sendUserInterfaceBadRequest);
-    }
-
     // Parse JSON
     let userInterface;
     try {

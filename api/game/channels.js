@@ -7,10 +7,6 @@ const apiTwitch = require('../../twitch/api');
 const searchChannelHandler = async function (req) {
     // TODO verify request JWT
 
-    if (!req.params || !req.params.user) {
-        throw Boom.badRequest(STRINGS.searchChannelBadRequest);
-    }
-
     try {
         const body = await apiTwitch.searchChannels(req.params.user);
         if (body.data && body.data.length) {
