@@ -31,7 +31,7 @@
     "jsonwebtoken": "^8.2.0",
     "request": "^2.85.0",
     "selfsigned": "^1.10.2",
-    "socket.io": "^2.3.0"
+    "ws": "^7.4.0"
   },
   "devDependencies": {
     "prettier": "^2.1.2"

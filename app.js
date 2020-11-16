@@ -22,8 +22,8 @@ const oauth2 = require('./twitch/oauth2');
     await server.start();
     console.log(SERVER.serverStarted, server.info.uri);
 
-    // Start Socket.io
-    socket.initSocketIO(server.listener);
+    // Start WebSocket Server
+    socket.initWebSocket(server);
 
     // Get token for server-to-server API requests
     await oauth2.retrieveTokens();

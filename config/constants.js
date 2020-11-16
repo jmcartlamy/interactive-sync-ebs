@@ -35,9 +35,10 @@ const API_TWITCH = {
     retrieveUserObjectSuccess: 'User object received: status %s',
 };
 
-const SOCKET_IO = {
-    socketStarted: 'Socket.io running at %s',
-    socketError: 'An error occurred during socket initialization: %s',
+const WEBSOCKET = {
+    websocketStarted: 'WebSocket Server running: %s',
+    websocketInitError: 'An error occurred during socket initialization: %s',
+    webSocketUnderlyingError: 'An error occurred: %s'
 };
 
 const CONFIG = {
@@ -53,6 +54,6 @@ const CONFIG = {
 module.exports = {
     SERVER: SERVER,
     API_TWITCH: API_TWITCH,
-    SOCKET_IO: SOCKET_IO,
+    WEBSOCKET: WEBSOCKET,
     CONFIG: CONFIG,
 };

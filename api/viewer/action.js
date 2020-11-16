@@ -11,7 +11,7 @@ const {
 } = require('../../config/state');
 const { attemptActionBroadcast } = require('./helpers/attemptActionBroadcast');
 const { userIsInCooldown } = require('./helpers/userIsInCooldown');
-const { emitBroadcast } = require('../../config/socket');
+const { sendMessageToChannelId } = require('../../config/socket');
 const { retrieveDisplayName } = require('./helpers/retrieveDisplayName');
 const { CONFIG } = require('../../config/constants');
 const { findCooldownByActionId } = require('./helpers/findCooldownByActionId');
@@ -42,12 +42,12 @@ const actionHandler = async function (req) {
         throw Boom.notAcceptable(STRINGS.actionInCooldown);
     }
 
-    // Emit to videogame connected with socket-io
+    // Emit to videogame connected with websocket
     const actionPayload = {
         ...req.payload,
         username: username,
     };
-    emitBroadcast('action', actionPayload);
+    sendMessageToChannelId(channelId, 'action', actionPayload);
 
     // Use cooldown from user interface
     const userInterface = getUserInterface(channelId);
