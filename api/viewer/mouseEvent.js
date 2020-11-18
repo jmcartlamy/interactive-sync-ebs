@@ -5,7 +5,7 @@ const { verifyAndDecode } = require('../../twitch/helpers/verifyAndDecode');
 const { verboseLog } = require('../../config/log');
 const { setChannelAction, getChannelAllActions } = require('../../config/state');
 const { userIsInCooldown } = require('./helpers/userIsInCooldown');
-const { sendMessageToChannelId } = require('../../config/socket');
+const { sendMessageToClient } = require('../../routes/websocket');
 
 /**
  * Handle a mouse event request to make an action
@@ -26,7 +26,7 @@ const mouseEventHandler = async function (req) {
     }
 
     // Emit to videogame connected with websocket
-    sendMessageToChannelId(channelId, 'mouse', req.payload);
+    sendMessageToClient(channelId, 'mouse', req.payload);
 
     // New cooldown for this mouse action
     const scheduledTimestamp = Math.floor(Date.now() + 250);

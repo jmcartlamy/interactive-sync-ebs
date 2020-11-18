@@ -1,45 +1,7 @@
-const Boom = require('@hapi/boom');
-const apiTwitch = require('../../twitch/api');
 const { verifyAndDecode } = require('../../twitch/helpers/verifyAndDecode');
 const { STRINGS } = require('../constants');
 const { verboseLog } = require('../../config/log');
-const { getUserInterface, setUserInterface } = require('../../config/state');
-
-/**
- * Call API Twitch to search channels
- */
-const userInterfaceHandler = async function (req) {
-    // TODO verify request JWT
-
-    // Parse JSON
-    let userInterface;
-    try {
-        userInterface = JSON.parse(req.payload.userInterface);
-    } catch (err) {
-        throw Boom.badRequest(STRINGS.sendUserInterfaceSyntaxError);
-    }
-
-    const channelId = req.payload.channelId;
-    // Set user interface in state
-    setUserInterface(channelId, userInterface);
-
-    // Send to broadcast twitch
-    const message = {
-        type: 'user_interface',
-        data: userInterface,
-    };
-    try {
-        verboseLog(STRINGS.newUserInterface, channelId);
-        await apiTwitch.sendBroadcastMessage(channelId, message);
-        return {
-            channelId,
-            userInterface,
-        };
-    } catch (err) {
-        verboseLog(err);
-        return err;
-    }
-};
+const { getUserInterface } = require('../../config/state');
 
 /**
  * Handle a viewer requesting the user interface
@@ -59,6 +21,5 @@ const userInterfaceQueryHandler = function (req) {
 };
 
 module.exports = {
-    userInterfaceHandler: userInterfaceHandler,
     userInterfaceQueryHandler: userInterfaceQueryHandler,
 };

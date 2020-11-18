@@ -14,11 +14,7 @@ const STRINGS = {
     actionBroadcast: 'Broadcasting action %s with value %s for c:%s',
     actionInCooldown: 'Action has been pushed recently, please wait.',
     newMouseEvent: 'New %s for c:%s on behalf of u:%s with coord %s',
-    newUserInterface: 'New user interface for c:%s',
     sendUserInterface: 'Sending user interface %s to u:%s',
-    sendUserInterfacePayloadMissing: 'Payload is missing in the POST request',
-    sendUserInterfaceBadRequest: 'A parameter is missing or userInterface is not a stringify JSON',
-    sendUserInterfaceSyntaxError: 'A parsing error occured with the JSON received.',
 };
 module.exports = {
     ACTIONS: ACTIONS,

@@ -34,7 +34,7 @@ const sendBroadcastMessage = function (channelId, message) {
                     verboseLog(API_TWITCH.messageSendError, channelId, err);
                     reject(err);
                 } else {
-                    verboseLog(API_TWITCH.pubsubResponse, channelId, res.statusCode);
+                    verboseLog(API_TWITCH.pubsubResponse, message.type, channelId, res.statusCode);
                     resolve();
                 }
             }
@@ -42,12 +42,68 @@ const sendBroadcastMessage = function (channelId, message) {
     });
 };
 
-const searchChannels = function (query) {
-    verboseLog(API_TWITCH.searchChannelRequest);
-    // Set the HTTP headers required by the Twitch API.
+const validateAccessToken = function (_headers = {}) {
+    verboseLog(API_TWITCH.validateAccessTokenRequest);
+    // Set the headers required by the Twitch API.
     const headers = {
-        'Client-ID': clientId,
-        Authorization: CONFIG.bearerPrefix + getAccessToken(),
+        Authorization: CONFIG.oauthPrefix + _headers.token || getAccessToken(),
+    };
+
+    return new Promise(function (resolve, reject) {
+        request(
+            `https://id.twitch.tv/oauth2/validate`,
+            {
+                headers,
+            },
+            (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const response = res.toJSON();
+                    const body = JSON.parse(response.body);
+
+                    resolve(body);
+                }
+            }
+        );
+    });
+};
+
+const retrieveUserObject = function (query, _headers = {}) {
+    verboseLog(API_TWITCH.retrieveUserObjectRequest, query.id);
+    // Set the headers required by the Twitch API.
+    const headers = {
+        'Client-ID': _headers.clientId || clientId,
+        Authorization: CONFIG.bearerPrefix + (_headers.token || getAccessToken()),
+    };
+
+    return new Promise(function (resolve, reject) {
+        request(
+            `https://api.twitch.tv/helix/users?id=${query.id}`,
+            {
+                method: 'GET',
+                headers,
+            },
+            (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const response = res.toJSON();
+                    const body = JSON.parse(response.body);
+
+                    resolve(body);
+                }
+            }
+        );
+    });
+};
+
+const searchChannels = function (query, _headers = {}) {
+    verboseLog(API_TWITCH.searchChannelRequest, query);
+    // Set the headers required by the Twitch API.
+    const headers = {
+        'Client-ID': _headers.clientId || clientId,
+        Authorization: CONFIG.bearerPrefix + _headers.token || getAccessToken(),
     };
 
     return new Promise(function (resolve, reject) {
@@ -59,43 +115,11 @@ const searchChannels = function (query) {
             },
             (err, res) => {
                 if (err) {
-                    verboseLog(API_TWITCH.searchChannelError, err);
                     reject(err);
                 } else {
                     const response = res.toJSON();
                     const body = JSON.parse(response.body);
 
-                    verboseLog(API_TWITCH.searchChannelSuccess, res.statusCode);
-                    resolve(body);
-                }
-            }
-        );
-    });
-};
-
-const retrieveUserObject = function (params) {
-    // Set the HTTP headers required by the Twitch API.
-    const headers = {
-        'Client-ID': clientId,
-        Authorization: CONFIG.bearerPrefix + getAccessToken(),
-    };
-
-    return new Promise(function (resolve, reject) {
-        request(
-            `https://api.twitch.tv/helix/users?id=${params.id}`,
-            {
-                method: 'GET',
-                headers,
-            },
-            (err, res) => {
-                if (err) {
-                    verboseLog(API_TWITCH.retrieveUserObjectError, null);
-                    reject(err);
-                } else {
-                    const response = res.toJSON();
-                    const body = JSON.parse(response.body);
-
-                    verboseLog(API_TWITCH.retrieveUserObjectSuccess, res.statusCode);
                     resolve(body);
                 }
             }
@@ -105,6 +129,7 @@ const retrieveUserObject = function (params) {
 
 module.exports = {
     sendBroadcastMessage: sendBroadcastMessage,
-    searchChannels: searchChannels,
+    validateAccessToken: validateAccessToken,
     retrieveUserObject: retrieveUserObject,
+    searchChannels: searchChannels,
 };

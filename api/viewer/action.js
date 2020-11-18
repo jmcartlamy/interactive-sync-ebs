@@ -11,7 +11,7 @@ const {
 } = require('../../config/state');
 const { attemptActionBroadcast } = require('./helpers/attemptActionBroadcast');
 const { userIsInCooldown } = require('./helpers/userIsInCooldown');
-const { sendMessageToChannelId } = require('../../config/socket');
+const { sendMessageToClient } = require('../../routes/websocket');
 const { retrieveDisplayName } = require('./helpers/retrieveDisplayName');
 const { CONFIG } = require('../../config/constants');
 const { findCooldownByActionId } = require('./helpers/findCooldownByActionId');
@@ -47,7 +47,7 @@ const actionHandler = async function (req) {
         ...req.payload,
         username: username,
     };
-    sendMessageToChannelId(channelId, 'action', actionPayload);
+    sendMessageToClient(channelId, 'action', actionPayload);
 
     // Use cooldown from user interface
     const userInterface = getUserInterface(channelId);

@@ -1,5 +1,6 @@
 const apiTwitch = require('../../../twitch/api');
 const { getTwitchUserObject, setTwitchUserObject } = require('../../../config/state');
+const { API_TWITCH } = require('../../../config/constants');
 
 /**
  * Request and/or get display name if authorized by the user
@@ -20,7 +21,6 @@ module.exports.retrieveDisplayName = async function (verifiedJWT) {
         };
         try {
             const body = await apiTwitch.retrieveUserObject(params);
-
             if (body.data && body.data.length) {
                 const twitchUserObject = body.data[0];
                 setTwitchUserObject(opaqueUserId, twitchUserObject);
@@ -29,6 +29,7 @@ module.exports.retrieveDisplayName = async function (verifiedJWT) {
                 }
             }
         } catch (err) {
+            verboseLog(API_TWITCH.retrieveUserObjectError, query.id);
             return null;
         }
     }

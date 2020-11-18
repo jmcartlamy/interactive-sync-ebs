@@ -11,7 +11,7 @@ const server = require('./config/server');
 
 const { CONFIG, SERVER } = require('./config/constants');
 const allRoutes = require('./routes/all');
-const socket = require('./config/socket');
+const socket = require('./routes/websocket');
 const oauth2 = require('./twitch/oauth2');
 
 (async () => {
