@@ -1,7 +1,8 @@
+const Joi = require('joi');
+
 const { actionHandler, actionQueryHandler } = require('../api/viewer/action');
 const { mouseEventHandler } = require('../api/viewer/mouseEvent');
 const { userInterfaceQueryHandler } = require('../api/shared/userInterface');
-const Joi = require('@hapi/joi');
 
 // TODO https://hapi.dev/api/?v=20.0.2#-routeoptionssecurity
 
