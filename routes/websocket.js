@@ -4,7 +4,6 @@ const apiTwitch = require('../twitch/api');
 const { WEBSOCKET } = require('../config/constants');
 const { verboseLog } = require('../config/log');
 const { setUserInterface } = require('../config/state');
-const { STRINGS } = require('../api/constants');
 
 let wss;
 const webSockets = {};
