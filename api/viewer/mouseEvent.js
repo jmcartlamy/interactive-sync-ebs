@@ -3,7 +3,7 @@ const Boom = require('@hapi/boom');
 const { STRINGS } = require('../constants');
 const { verifyAndDecode } = require('../../twitch/helpers/verifyAndDecode');
 const { verboseLog } = require('../../config/log');
-const { setChannelAction, getChannelAllActions } = require('../../config/state');
+const { setChannelAction } = require('../../config/state');
 const { userIsInCooldown } = require('./helpers/userIsInCooldown');
 const { sendMessageToClient } = require('../../routes/websocket');
 
@@ -20,16 +20,12 @@ const mouseEventHandler = async function (req) {
         throw Boom.tooManyRequests(STRINGS.cooldown);
     }
 
-    // Verify if action has been pushed recently
-    if (getChannelAllActions(channelId, 'mouse') > Date.now()) {
-        throw Boom.notAcceptable(STRINGS.actionInCooldown);
-    }
-
     // Emit to videogame connected with websocket
     sendMessageToClient(channelId, 'mouse', req.payload);
 
+    // TODO count number of click per seconde (< 5)
     // New cooldown for this mouse action
-    const scheduledTimestamp = Math.floor(Date.now() + 250);
+    const scheduledTimestamp = Math.floor(Date.now() + 1000);
 
     // Save the new scheduled timestamp for the type and the channel.
     setChannelAction(channelId, scheduledTimestamp, 'mouse');
