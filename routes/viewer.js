@@ -20,6 +20,7 @@ module.exports = async function (server) {
                 validate: {
                     payload: Joi.object({
                         id: Joi.string().min(1).max(64).required(),
+                        view: Joi.string().max(64).required(),
                     }),
                 },
             },

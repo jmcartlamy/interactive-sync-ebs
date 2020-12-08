@@ -1,4 +1,4 @@
-const color = require("color");
+const color = require('color');
 
 const ACTIONS = {
     initialTestColor: color('#6441A4'),
@@ -13,6 +13,7 @@ const STRINGS = {
     sendAction: 'Sending actions %s to u:%s',
     actionBroadcast: 'Broadcasting action %s with value %s for c:%s',
     actionInCooldown: 'Action has been pushed recently, please wait.',
+    actionViewErroned: "Parameter view is erroned. Must be 'mobile', 'panel_' or 'video_overlay'",
     newMouseEvent: 'New %s for c:%s on behalf of u:%s with coord %s',
     sendUserInterface: 'Sending user interface %s to u:%s',
 };

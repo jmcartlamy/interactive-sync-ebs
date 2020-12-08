@@ -14,7 +14,7 @@ const { userIsInCooldown } = require('./helpers/userIsInCooldown');
 const { sendMessageToClient } = require('../../routes/websocket');
 const { retrieveDisplayName } = require('./helpers/retrieveDisplayName');
 const { CONFIG } = require('../../config/constants');
-const { findCooldownByActionId } = require('./helpers/findCooldownByActionId');
+const { findCooldownByViewAndActionId } = require('./helpers/findCooldownByViewAndActionId');
 
 /**
  * Handle a viewer request to make an action
@@ -27,20 +27,25 @@ const actionHandler = async function (req) {
     const username = await retrieveDisplayName(verifiedJWT);
 
     const { channel_id: channelId, opaque_user_id: opaqueUserId } = verifiedJWT;
-    const actionId = req.payload.id;
+    const { id: actionId, view } = req.payload;
+
+    // Verify actionId
+    if (!['panel', 'mobile', 'video_overlay'].includes(view)) {
+        throw Boom.tooManyRequests(STRINGS.actionViewErroned);
+    }
 
     // Bot abuse prevention:  don't allow a user to spam the button.
     if (userIsInCooldown(opaqueUserId, 'action')) {
         throw Boom.tooManyRequests(STRINGS.cooldown);
     }
 
-    // Log new action
-    verboseLog(STRINGS.newAction, channelId, opaqueUserId);
-
     // Verify if action has been pushed recently
     if (getChannelAction(channelId, actionId) > Date.now()) {
         throw Boom.notAcceptable(STRINGS.actionInCooldown);
     }
+
+    // Log new action
+    verboseLog(STRINGS.newAction, channelId, opaqueUserId);
 
     // Emit to videogame connected with websocket
     const actionPayload = {
@@ -51,7 +56,7 @@ const actionHandler = async function (req) {
 
     // Use cooldown from user interface
     const userInterface = getUserInterface(channelId);
-    const userInterfaceCooldown = findCooldownByActionId(actionId, userInterface);
+    const userInterfaceCooldown = findCooldownByViewAndActionId(view, actionId, userInterface);
     const cooldownAction =
         userInterfaceCooldown < 3000 ? CONFIG.actionCooldownMs : userInterfaceCooldown;
 
