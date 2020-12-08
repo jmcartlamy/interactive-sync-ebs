@@ -1,5 +1,7 @@
 # Interactive Sync EBS
 
+![Build and deploy - interactive-sync-ebs](https://github.com/jmcartlamy/interactive-sync-ebs/workflows/Build%20and%20deploy%20-%20interactive-sync-ebs/badge.svg)
+
 A Twitch extension connected to the [Twitch API](https://dev.twitch.tv/docs/api) allowing to a viewer to perform chosen actions by developers to use them in twitch plays experiences.
 
 ## Extensions Backend Service
