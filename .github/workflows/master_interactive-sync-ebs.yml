@@ -29,5 +29,5 @@ jobs:
       with:
         app-name: 'interactive-sync-ebs'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_936a70f7b7bc4e88821526787fd1e2f0 }}
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_0578de7ace924289a0290009b5922e1e }}
         package: .
