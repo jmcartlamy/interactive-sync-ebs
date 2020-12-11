@@ -6,24 +6,32 @@ const { verboseLog } = require('../../config/log');
 const { setChannelAction } = require('../../config/state');
 const { userIsInCooldown } = require('./helpers/userIsInCooldown');
 const { sendMessageToClient } = require('../../routes/websocket');
+const { retrieveDisplayName } = require('./helpers/retrieveDisplayName');
 
 /**
  * Handle a mouse event request to make an action
  */
 const mouseEventHandler = async function (req) {
     // Verify all requests.
-    const payload = verifyAndDecode(req.headers.authorization);
-    const { channel_id: channelId, opaque_user_id: opaqueUserId } = payload;
+    const verifiedJWT = verifyAndDecode(req.headers.authorization);
+    const { channel_id: channelId, opaque_user_id: opaqueUserId } = verifiedJWT;
 
     // Bot abuse prevention:  don't allow a user to spam the button.
     if (userIsInCooldown(opaqueUserId, 'mouse')) {
         throw Boom.tooManyRequests(STRINGS.cooldown);
     }
+    // Request and/or get display name if authorized by the user
+    const username = await retrieveDisplayName(verifiedJWT);
 
     // Emit to videogame connected with websocket
-    sendMessageToClient(channelId, 'mouse', req.payload);
+    const mousePayload = {
+        ...req.payload,
+        username: username,
+    };
+    sendMessageToClient(channelId, 'mouse', mousePayload);
 
     // TODO count number of click per seconde (< 5)
+    // TODO cooldown mouse
     // New cooldown for this mouse action
     const scheduledTimestamp = Math.floor(Date.now() + 1000);
 
@@ -39,7 +47,7 @@ const mouseEventHandler = async function (req) {
         all other extension instances on this channel. 
     */
 
-    return req.payload;
+    return mousePayload;
 };
 
 module.exports = {

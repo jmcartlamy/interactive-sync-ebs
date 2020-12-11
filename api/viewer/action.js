@@ -23,9 +23,6 @@ const actionHandler = async function (req) {
     // Verify the request.
     const verifiedJWT = verifyAndDecode(req.headers.authorization);
 
-    // Request and/or get display name if authorized by the user
-    const username = await retrieveDisplayName(verifiedJWT);
-
     const { channel_id: channelId, opaque_user_id: opaqueUserId } = verifiedJWT;
     const { id: actionId, view } = req.payload;
 
@@ -43,6 +40,9 @@ const actionHandler = async function (req) {
     if (getChannelAction(channelId, actionId) > Date.now()) {
         throw Boom.notAcceptable(STRINGS.actionInCooldown);
     }
+
+    // Request and/or get display name if authorized by the user
+    const username = await retrieveDisplayName(verifiedJWT);
 
     // Log new action
     verboseLog(STRINGS.newAction, channelId, opaqueUserId);
