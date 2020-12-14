@@ -28,8 +28,8 @@ module.exports = {
         return channelAction[channelId][type];
     },
 
-    setChannelAction: function (channelId, cooldownAction, type) {
-        channelAction[channelId][type] = cooldownAction;
+    setChannelAction: function (channelId, scheduledTimestamp, type) {
+        channelAction[channelId][type] = scheduledTimestamp;
     },
 
     getUserInterface: function (channelId) {
@@ -59,3 +59,5 @@ module.exports = {
         userCooldowns[opaqueUserId][type] = cooldown;
     },
 };
+
+// TODO protect undefined of variable (set)

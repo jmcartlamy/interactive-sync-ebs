@@ -3,7 +3,7 @@ const Boom = require('@hapi/boom');
 const { STRINGS } = require('../constants');
 const { verifyAndDecode } = require('../../twitch/helpers/verifyAndDecode');
 const { verboseLog } = require('../../config/log');
-const { setChannelAction } = require('../../config/state');
+const { setChannelAction, getChannelAction } = require('../../config/state');
 const { userIsInCooldown } = require('./helpers/userIsInCooldown');
 const { sendMessageToClient } = require('../../routes/websocket');
 const { retrieveDisplayName } = require('./helpers/retrieveDisplayName');
@@ -20,6 +20,23 @@ const mouseEventHandler = async function (req) {
     if (userIsInCooldown(opaqueUserId, 'mouse')) {
         throw Boom.tooManyRequests(STRINGS.cooldown);
     }
+
+    // Limit click per second for mouse event
+    const mouseCooldown = getChannelAction(channelId, 'mouse');
+    const array = mouseCooldown ? mouseCooldown : [];
+    const now = Date.now();
+    if (array.length === req.payload.cooldown.limit) {
+        if (array[0] + 1000 < now) {
+            array.shift();
+        } else {
+            throw Boom.notAcceptable(STRINGS.cooldownChannel);
+        }
+    }
+    array.push(now);
+
+    // Save the array scheduled timestamp for the type and the channel.
+    setChannelAction(channelId, array, 'mouse');
+
     // Request and/or get display name if authorized by the user
     const username = await retrieveDisplayName(verifiedJWT);
 
@@ -29,14 +46,6 @@ const mouseEventHandler = async function (req) {
         username: username,
     };
     sendMessageToClient(channelId, 'mouse', mousePayload);
-
-    // TODO count number of click per seconde (< 5)
-    // TODO cooldown mouse
-    // New cooldown for this mouse action
-    const scheduledTimestamp = Math.floor(Date.now() + 1000);
-
-    // Save the new scheduled timestamp for the type and the channel.
-    setChannelAction(channelId, scheduledTimestamp, 'mouse');
 
     // Log new mouse down action
     const coord = 'x: ' + req.payload.clientX + ', y: ' + req.payload.clientY;
