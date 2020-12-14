@@ -26,17 +26,17 @@ const actionHandler = async function (req) {
     const { channel_id: channelId, opaque_user_id: opaqueUserId } = verifiedJWT;
     const { id: actionId, view } = req.payload;
 
-    // Verify actionId
+    // Verify actionId param
     if (!['panel', 'mobile', 'video_overlay'].includes(view)) {
-        throw Boom.tooManyRequests(STRINGS.actionViewErroned);
+        throw Boom.badRequest(STRINGS.actionViewErroned);
     }
 
-    // Bot abuse prevention:  don't allow a user to spam the button.
+    // Bot abuse prevention: don't allow a user to spam the button.
     if (userIsInCooldown(opaqueUserId, 'action')) {
         throw Boom.tooManyRequests(STRINGS.cooldown);
     }
 
-    // Verify if action has been pushed recently
+    // Verify if action has been pushed recently if broadcast is activated
     if (getChannelAction(channelId, actionId) > Date.now()) {
         throw Boom.notAcceptable(STRINGS.actionInCooldown);
     }
@@ -56,20 +56,27 @@ const actionHandler = async function (req) {
 
     // Use cooldown from user interface
     const userInterface = getUserInterface(channelId);
-    const userInterfaceCooldown = findCooldownByViewAndActionId(view, actionId, userInterface);
-    const cooldownAction =
-        userInterfaceCooldown < 3000 ? CONFIG.actionCooldownMs : userInterfaceCooldown;
+    const cooldownObject = findCooldownByViewAndActionId(view, actionId, userInterface);
 
-    // New cooldown for this action
-    const scheduledTimestamp = Math.floor(Date.now() + cooldownAction);
+    // Save and broadcast cooldown only if broadcast is activated
+    if (cooldownObject && cooldownObject.broadcast) {
+        // Get duration of cooldown
+        const actionCooldownDuration =
+            cooldownObject.duration < CONFIG.actionCooldownMs
+                ? CONFIG.actionCooldownMs
+                : cooldownObject.duration;
 
-    // Save the new scheduled timestamp for the type and the channel.
-    setChannelAction(channelId, scheduledTimestamp, actionId);
+        // New cooldown for this action
+        const scheduledTimestamp = Math.floor(Date.now() + actionCooldownDuration);
 
-    // Broadcast the new action to all other extension instances on this channel.
-    attemptActionBroadcast(channelId, cooldownAction, actionId);
+        // Save the new scheduled timestamp for the type and the channel.
+        setChannelAction(channelId, scheduledTimestamp, actionId);
 
-    return cooldownAction;
+        // Broadcast the new action to all other extension instances on this channel.
+        attemptActionBroadcast(channelId, actionCooldownDuration, actionId);
+    }
+
+    return cooldownObject;
 };
 
 /**

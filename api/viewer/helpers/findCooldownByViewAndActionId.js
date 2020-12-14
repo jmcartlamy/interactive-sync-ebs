@@ -24,7 +24,12 @@ module.exports.findCooldownByViewAndActionId = function (view, actionId, userInt
 const findCooldown = function (actionId, userInterfaceView) {
     if (userInterfaceView.components && userInterfaceView.components.length !== 0) {
         const result = userInterfaceView.components.find(function (item) {
-            return item.name === actionId && item.cooldown && typeof item.cooldown === 'number';
+            return (
+                item.name === actionId &&
+                item.cooldown &&
+                item.cooldown.duration &&
+                typeof item.cooldown.duration === 'number'
+            );
         });
         if (result) {
             return result.cooldown || null;
