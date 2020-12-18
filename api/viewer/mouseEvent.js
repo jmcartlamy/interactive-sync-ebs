@@ -3,10 +3,10 @@ const Boom = require('@hapi/boom');
 const { STRINGS } = require('../constants');
 const { verifyAndDecode } = require('../../twitch/helpers/verifyAndDecode');
 const { verboseLog } = require('../../config/log');
-const { setChannelAction, getChannelAction } = require('../../config/state');
 const { userIsInCooldown } = require('./helpers/userIsInCooldown');
 const { sendMessageToClient } = require('../../routes/websocket');
 const { retrieveDisplayName } = require('./helpers/retrieveDisplayName');
+const { mouseActionLimitIsReached } = require('./helpers/mouseActionLimitIsReached');
 
 /**
  * Handle a mouse event request to make an action
@@ -22,20 +22,9 @@ const mouseEventHandler = async function (req) {
     }
 
     // Limit click per second for mouse event
-    const mouseCooldown = getChannelAction(channelId, 'mouse');
-    const array = mouseCooldown ? mouseCooldown : [];
-    const now = Date.now();
-    if (array.length === req.payload.cooldown.limit) {
-        if (array[0] + 1000 < now) {
-            array.shift();
-        } else {
-            throw Boom.notAcceptable(STRINGS.cooldownChannel);
-        }
+    if (mouseActionLimitIsReached(channelId, req.payload.cooldown.limit)) {
+        throw Boom.notAcceptable(STRINGS.cooldownChannel);
     }
-    array.push(now);
-
-    // Save the array scheduled timestamp for the type and the channel.
-    setChannelAction(channelId, array, 'mouse');
 
     // Request and/or get display name if authorized by the user
     const username = await retrieveDisplayName(verifiedJWT);
