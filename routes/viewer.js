@@ -21,6 +21,9 @@ module.exports = async function (server) {
                     payload: Joi.object({
                         id: Joi.string().min(1).max(64).required(),
                         view: Joi.string().max(64).required(),
+                        values: Joi.object()
+                            .pattern(Joi.string().min(1).max(64), Joi.string().max(128))
+                            .max(4),
                     }),
                 },
             },
