@@ -1,6 +1,6 @@
 const apiTwitch = require('../../../twitch/api');
 const { getChannelCooldown, setChannelCooldown } = require('../../../config/state');
-const { STRINGS } = require('../../constants');
+const { STRINGS, ACTIONS_TYPE } = require('../../constants');
 const { CONFIG } = require('../../../config/constants');
 const { verboseLog } = require('../../../config/log');
 
@@ -10,7 +10,7 @@ const attemptActionBroadcast = async function (channelId, actionCooldown, action
     const cooldown = getChannelCooldown(channelId);
     // Send to broadcast twitch
     const message = {
-        type: 'action',
+        type: ACTIONS_TYPE.input,
         data: {
             actionId: actionId,
             actionCooldown: actionCooldown || null,

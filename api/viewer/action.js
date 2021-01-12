@@ -1,20 +1,20 @@
 const Boom = require('@hapi/boom');
 
-const { STRINGS } = require('../constants');
+const { STRINGS, ACTIONS_TYPE } = require('../constants');
 const { verifyAndDecode } = require('../../twitch/helpers/verifyAndDecode');
 const { verboseLog } = require('../../config/log');
-const {
-    setChannelAction,
-    getChannelAction,
-    getChannelAllActions,
-    getUserInterface,
-} = require('../../config/state');
+const { setChannelActionCooldown, getChannelAllActions } = require('../../config/state');
 const { attemptActionBroadcast } = require('./helpers/attemptActionBroadcast');
-const { userIsInCooldown } = require('./helpers/userIsInCooldown');
 const { sendMessageToClient } = require('../../routes/websocket');
 const { retrieveDisplayName } = require('./helpers/retrieveDisplayName');
 const { CONFIG } = require('../../config/constants');
 const { findCooldownByViewAndActionId } = require('./helpers/findCooldownByViewAndActionId');
+const { registerUserCooldowns } = require('./helpers/registerUserCooldowns');
+const {
+    userIsInCooldown,
+    actionIsInCooldownForChannel,
+    actionIsInCooldownForUser,
+} = require('./helpers/cooldown');
 
 /**
  * Handle a viewer request to make an action
@@ -25,20 +25,34 @@ const actionHandler = async function (req) {
 
     const { channel_id: channelId, opaque_user_id: opaqueUserId } = verifiedJWT;
     const { id: actionId, view } = req.payload;
+    const DateNow = Date.now();
 
     // Verify actionId param
     if (!['panel', 'mobile', 'video_overlay'].includes(view)) {
         throw Boom.badRequest(STRINGS.actionViewErroned);
     }
 
-    // Bot abuse prevention: don't allow a user to spam the button.
-    if (userIsInCooldown(opaqueUserId, 'action')) {
-        throw Boom.tooManyRequests(STRINGS.cooldown);
+    // Bot abuse prevention: don't allow a user to spam.
+    if (userIsInCooldown(opaqueUserId, ACTIONS_TYPE.input, DateNow)) {
+        throw Boom.tooManyRequests(STRINGS.userInCooldown);
     }
 
     // Verify if action has been pushed recently if broadcast is activated
-    if (getChannelAction(channelId, actionId) > Date.now()) {
+    if (actionIsInCooldownForChannel(channelId, actionId, DateNow)) {
         throw Boom.notAcceptable(STRINGS.actionInCooldown);
+    }
+
+    // Verify user don't bypass the cooldown for this action
+    if (actionIsInCooldownForUser(opaqueUserId, actionId, DateNow)) {
+        throw Boom.notAcceptable(STRINGS.userActionInCooldown);
+    }
+
+    // Use cooldown from user interface
+    const cooldownUI = findCooldownByViewAndActionId(view, channelId, actionId);
+
+    // Verify action id exist in the user interface
+    if (!cooldownUI) {
+        throw Boom.forbidden(STRINGS.actionIdErroned);
     }
 
     // Request and/or get display name if authorized by the user
@@ -52,31 +66,31 @@ const actionHandler = async function (req) {
         ...req.payload,
         username: username,
     };
-    sendMessageToClient(channelId, 'action', actionPayload);
+    sendMessageToClient(channelId, ACTIONS_TYPE.input, actionPayload);
 
-    // Use cooldown from user interface
-    const userInterface = getUserInterface(channelId);
-    const cooldownObject = findCooldownByViewAndActionId(view, actionId, userInterface);
+    // Set cooldown for the current user
+    // prettier-ignore
+    registerUserCooldowns(opaqueUserId, { actionId, type: ACTIONS_TYPE.input, cooldownUI, DateNow });
 
     // Save and broadcast cooldown only if broadcast is activated
-    if (cooldownObject && cooldownObject.broadcast) {
+    if (cooldownUI && cooldownUI.broadcast) {
         // Get duration of cooldown
         const actionCooldownDuration =
-            cooldownObject.duration < CONFIG.actionCooldownMs
+            cooldownUI.duration < CONFIG.actionCooldownMs
                 ? CONFIG.actionCooldownMs
-                : cooldownObject.duration;
+                : cooldownUI.duration;
 
         // New cooldown for this action
-        const scheduledTimestamp = Math.floor(Date.now() + actionCooldownDuration);
+        const scheduledTimestamp = Math.floor(DateNow + actionCooldownDuration);
 
         // Save the new scheduled timestamp for the type and the channel.
-        setChannelAction(channelId, scheduledTimestamp, actionId);
+        setChannelActionCooldown(channelId, scheduledTimestamp, actionId);
 
         // Broadcast the new action to all other extension instances on this channel.
         attemptActionBroadcast(channelId, actionCooldownDuration, actionId);
     }
 
-    return cooldownObject;
+    return cooldownUI;
 };
 
 /**

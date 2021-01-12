@@ -1,8 +1,12 @@
+const { getUserInterface } = require('../../../config/state');
+
 /**
  * Find cooldown on user interface by view and action id
  */
-module.exports.findCooldownByViewAndActionId = function (view, actionId, userInterface) {
+module.exports.findCooldownByViewAndActionId = function (view, channelId, actionId) {
+    const userInterface = getUserInterface(channelId);
     let cooldown = null;
+
     if (view && userInterface) {
         if (view === 'video_overlay') {
             for (const key in userInterface.video_overlay) {

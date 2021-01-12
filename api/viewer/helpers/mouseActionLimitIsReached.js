@@ -1,10 +1,11 @@
-const { getChannelAction, setChannelAction } = require('../../../config/state');
+const { getChannelActionCooldown, setChannelActionCooldown } = require('../../../config/state');
+const { ACTIONS_TYPE } = require('../../constants');
 
 /**
  * Limit click per second for mouse event
  */
 module.exports.mouseActionLimitIsReached = function (channelId, limit) {
-    const mouseCooldown = getChannelAction(channelId, 'mouse');
+    const mouseCooldown = getChannelActionCooldown(channelId, ACTIONS_TYPE.mouse);
     const array = mouseCooldown ? mouseCooldown : [];
     const now = Date.now();
     if (array.length === limit) {
@@ -17,7 +18,7 @@ module.exports.mouseActionLimitIsReached = function (channelId, limit) {
     array.push(now);
 
     // Save the array scheduled timestamp for the type and the channel.
-    setChannelAction(channelId, array, 'mouse');
+    setChannelActionCooldown(channelId, array, ACTIONS_TYPE.mouse);
 
     return false;
 };

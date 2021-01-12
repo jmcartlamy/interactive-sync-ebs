@@ -1,8 +1,8 @@
 const twitchUserObject = {};
 const channelAction = {};
 const channelUserInterface = {};
-const channelCooldowns = {};    // rate limit compliance
-const userCooldowns = {};       // spam prevention
+const channelCooldowns = {}; // rate limit compliance
+const userCooldowns = {}; // spam prevention
 
 module.exports = {
     getTwitchUserObject: function (opaqueUserId) {
@@ -21,15 +21,15 @@ module.exports = {
         return channelAction[channelId];
     },
 
-    getChannelAction: function (channelId, type) {
+    getChannelActionCooldown: function (channelId, actionId) {
         if (!channelAction[channelId]) {
             channelAction[channelId] = {};
         }
-        return channelAction[channelId][type];
+        return channelAction[channelId][actionId];
     },
 
-    setChannelAction: function (channelId, scheduledTimestamp, type) {
-        channelAction[channelId][type] = scheduledTimestamp;
+    setChannelActionCooldown: function (channelId, scheduledTimestamp, actionId) {
+        channelAction[channelId][actionId] = scheduledTimestamp;
     },
 
     getUserInterface: function (channelId) {
@@ -57,6 +57,16 @@ module.exports = {
 
     setUserCooldown: function (opaqueUserId, cooldown, type) {
         userCooldowns[opaqueUserId][type] = cooldown;
+    },
+
+    getUserActionCooldown: function (opaqueUserId, actionId) {
+        if (!userCooldowns[opaqueUserId]) {
+            userCooldowns[opaqueUserId] = {};
+        }
+        return userCooldowns[opaqueUserId][actionId];
+    },
+    setUserActionCooldown: function (opaqueUserId, cooldown, actionId) {
+        userCooldowns[opaqueUserId][actionId] = cooldown;
     },
 };
 

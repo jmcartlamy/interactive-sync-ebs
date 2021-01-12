@@ -28,6 +28,7 @@ const oauth2 = require('./twitch/oauth2');
     // Get token for server-to-server API requests
     await oauth2.retrieveTokens();
 
+    // TODO
     // Periodically clear cool-down tracking to prevent unbounded growth due to
     // per-session logged-out user tokens.
     setInterval(() => {
