@@ -76,6 +76,7 @@ const WEBSOCKET = {
 const CONFIG = {
     serverTokenDurationSec: 30, // our tokens for pubsub expire after 30 seconds
     inputCooldownMs: 3000, // minimum cooldown to prevent bot abuse
+    mouseEventCooldownMs: 1000, // minimum cooldown including limit registered in current user interface
     userInputEventCooldownMs: 3000, // maximum input event rate per user to prevent bot abuse
     userMouseEventCooldownMs: 1000, // maximum mouse event rate per user to prevent bot abuse
     userCooldownClearIntervalMs: 60000, // interval to reset our tracking object

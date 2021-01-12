@@ -5,8 +5,12 @@ const { verifyAndDecode } = require('../../twitch/helpers/verifyAndDecode');
 const { verboseLog } = require('../../config/log');
 const { sendMessageToClient } = require('../../routes/websocket');
 const { retrieveDisplayName } = require('./helpers/retrieveDisplayName');
-const { mouseActionLimitIsReached } = require('./helpers/mouseActionLimitIsReached');
-const { userIsInCooldown } = require('./helpers/cooldown');
+const {
+    mouseActionLimitIsReachedForChannel,
+} = require('./helpers/mouseActionLimitIsReachedForChannel');
+const { userIsInCooldown, actionIsInCooldownForUser } = require('./helpers/cooldown');
+const { registerUserCooldowns } = require('./helpers/registerUserCooldowns');
+const { findCooldownByMouseType } = require('./helpers/findCooldownByMouseType');
 
 /**
  * Handle a mouse event request to make an action
@@ -16,17 +20,43 @@ const mouseEventHandler = async function (req) {
     const verifiedJWT = verifyAndDecode(req.headers.authorization);
     const { channel_id: channelId, opaque_user_id: opaqueUserId } = verifiedJWT;
     const DateNow = Date.now();
+    const { type: mouseType, clientX, clientY, F } = req.payload;
+
+    // Verify type parameter
+    if (!['mousedown', 'mouseup'].includes(mouseType)) {
+        throw Boom.badRequest(STRINGS.mouseTypeErroned);
+    }
 
     // Bot abuse prevention:  don't allow a user to spam the button.
     if (userIsInCooldown(opaqueUserId, ACTIONS_TYPE.mouse, DateNow)) {
-        throw Boom.tooManyRequests(STRINGS.actionInCooldown);
+        throw Boom.tooManyRequests(STRINGS.mouseTypeInCooldown);
     }
 
-    // Limit click per second for mouse event
-    // TODO IMPROVE
-    if (mouseActionLimitIsReached(channelId, req.payload.cooldown.limit)) {
+    // Verify user don't bypass the cooldown for this mouse event
+    if (actionIsInCooldownForUser(opaqueUserId, mouseType, DateNow)) {
+        throw Boom.notAcceptable(STRINGS.userActionInCooldown);
+    }
+
+    // Use cooldown from user interface
+    const cooldownUI = findCooldownByMouseType(channelId, mouseType);
+
+    // Verify action id exist in the user interface
+    if (!cooldownUI) {
+        throw Boom.forbidden(STRINGS.actionIdErroned);
+    }
+
+    // Limit click per second for mouse event type
+    if (mouseActionLimitIsReachedForChannel(channelId, { mouseType, cooldownUI }, DateNow)) {
         throw Boom.notAcceptable(STRINGS.cooldownChannel);
     }
+
+    // Set cooldown for the current user
+    registerUserCooldowns(opaqueUserId, {
+        actionId: mouseType,
+        type: ACTIONS_TYPE.mouse,
+        cooldownUI,
+        DateNow,
+    });
 
     // Request and/or get display name if authorized by the user
     const username = await retrieveDisplayName(verifiedJWT);
@@ -39,8 +69,8 @@ const mouseEventHandler = async function (req) {
     sendMessageToClient(channelId, ACTIONS_TYPE.mouse, mousePayload);
 
     // Log new mouse down action
-    const coord = 'x: ' + req.payload.clientX + ', y: ' + req.payload.clientY;
-    verboseLog(STRINGS.newMouseEvent, req.payload.type, channelId, opaqueUserId, coord);
+    const coord = 'x: ' + clientX + ', y: ' + clientY;
+    verboseLog(STRINGS.newMouseEvent, mouseType, channelId, opaqueUserId, coord);
 
     /* 
         We don't have to broadcast a mouse event action to 

@@ -40,12 +40,7 @@ module.exports = async function (server) {
             options: {
                 validate: {
                     payload: Joi.object({
-                        id: Joi.string().min(1).max(64).required(),
-                        type: Joi.string().min(1).max(64).required(),
-                        cooldown: Joi.object({
-                            duration: Joi.number().integer().min(1000).max(30000).required(),
-                            limit: Joi.number().integer().min(1).max(10).required(),
-                        }).required(),
+                        type: Joi.string().min(1).max(64).required(),   
                         clientWidth: Joi.number().integer().min(1).max(7680).required(),
                         clientHeight: Joi.number().integer().min(1).max(7680).required(),
                         clientX: Joi.number().integer().min(1).max(7680).required(),

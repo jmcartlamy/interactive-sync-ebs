@@ -27,7 +27,7 @@ const inputEventHandler = async function (req) {
     const { id: actionId, view } = req.payload;
     const DateNow = Date.now();
 
-    // Verify actionId param
+    // Verify actionId parameter
     if (!['panel', 'mobile', 'video_overlay'].includes(view)) {
         throw Boom.badRequest(STRINGS.actionViewErroned);
     }
@@ -69,8 +69,12 @@ const inputEventHandler = async function (req) {
     sendMessageToClient(channelId, ACTIONS_TYPE.input, inputPayload);
 
     // Set cooldown for the current user
-    // prettier-ignore
-    registerUserCooldowns(opaqueUserId, { actionId, type: ACTIONS_TYPE.input, cooldownUI, DateNow });
+    registerUserCooldowns(opaqueUserId, {
+        actionId,
+        type: ACTIONS_TYPE.input,
+        cooldownUI,
+        DateNow,
+    });
 
     // Save and broadcast cooldown only if broadcast is activated
     if (cooldownUI && cooldownUI.broadcast) {
