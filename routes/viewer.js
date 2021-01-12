@@ -1,6 +1,7 @@
 const Joi = require('joi');
 
-const { actionHandler, actionQueryHandler } = require('../api/viewer/action');
+const { actionQueryHandler } = require('../api/viewer/actionQuery');
+const { inputEventHandler } = require('../api/viewer/inputEvent');
 const { mouseEventHandler } = require('../api/viewer/mouseEvent');
 const { userInterfaceQueryHandler } = require('../api/viewer/userInterface');
 
@@ -15,7 +16,7 @@ module.exports = async function (server) {
         {
             method: 'POST',
             path: '/action/new',
-            handler: actionHandler,
+            handler: inputEventHandler,
             options: {
                 validate: {
                     payload: Joi.object({
@@ -30,12 +31,6 @@ module.exports = async function (server) {
                     }),
                 },
             },
-        },
-        // Handle a new viewer requesting actions properties.
-        {
-            method: 'GET',
-            path: '/action/query',
-            handler: actionQueryHandler,
         },
         // Handle a viewer request to make a mouse action
         {
@@ -58,6 +53,12 @@ module.exports = async function (server) {
                     }).required(),
                 },
             },
+        },
+        // Handle a new viewer requesting actions properties.
+        {
+            method: 'GET',
+            path: '/action/query',
+            handler: actionQueryHandler,
         },
         // Handle a viewer requesting the user interface
         {

@@ -3,7 +3,7 @@ const Boom = require('@hapi/boom');
 const { STRINGS, ACTIONS_TYPE } = require('../constants');
 const { verifyAndDecode } = require('../../twitch/helpers/verifyAndDecode');
 const { verboseLog } = require('../../config/log');
-const { setChannelActionCooldown, getChannelAllActions } = require('../../config/state');
+const { setChannelActionCooldown } = require('../../config/state');
 const { attemptActionBroadcast } = require('./helpers/attemptActionBroadcast');
 const { sendMessageToClient } = require('../../routes/websocket');
 const { retrieveDisplayName } = require('./helpers/retrieveDisplayName');
@@ -17,9 +17,9 @@ const {
 } = require('./helpers/cooldown');
 
 /**
- * Handle a viewer request to make an action
+ * Handle an input event request to make an action
  */
-const actionHandler = async function (req) {
+const inputEventHandler = async function (req) {
     // Verify the request.
     const verifiedJWT = verifyAndDecode(req.headers.authorization);
 
@@ -58,15 +58,15 @@ const actionHandler = async function (req) {
     // Request and/or get display name if authorized by the user
     const username = await retrieveDisplayName(verifiedJWT);
 
-    // Log new action
+    // Log new input action
     verboseLog(STRINGS.newAction, channelId, opaqueUserId);
 
     // Emit to videogame connected with websocket
-    const actionPayload = {
+    const inputPayload = {
         ...req.payload,
         username: username,
     };
-    sendMessageToClient(channelId, ACTIONS_TYPE.input, actionPayload);
+    sendMessageToClient(channelId, ACTIONS_TYPE.input, inputPayload);
 
     // Set cooldown for the current user
     // prettier-ignore
@@ -76,8 +76,8 @@ const actionHandler = async function (req) {
     if (cooldownUI && cooldownUI.broadcast) {
         // Get duration of cooldown
         const actionCooldownDuration =
-            cooldownUI.duration < CONFIG.actionCooldownMs
-                ? CONFIG.actionCooldownMs
+            cooldownUI.duration < CONFIG.inputCooldownMs
+                ? CONFIG.inputCooldownMs
                 : cooldownUI.duration;
 
         // New cooldown for this action
@@ -93,22 +93,6 @@ const actionHandler = async function (req) {
     return cooldownUI;
 };
 
-/**
- * Handle a new viewer requesting the actions
- */
-const actionQueryHandler = function (req) {
-    // Verify all requests.
-    const payload = verifyAndDecode(req.headers.authorization);
-
-    // Get the cooldown for the channel from the payload and return it.
-    const { channel_id: channelId, opaque_user_id: opaqueUserId } = payload;
-    const actions = getChannelAllActions(channelId);
-    const stringifiedActions = JSON.stringify(actions);
-    verboseLog(STRINGS.sendAction, stringifiedActions, opaqueUserId);
-    return stringifiedActions;
-};
-
 module.exports = {
-    actionHandler: actionHandler,
-    actionQueryHandler: actionQueryHandler,
+    inputEventHandler: inputEventHandler,
 };

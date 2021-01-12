@@ -11,7 +11,7 @@ module.exports.registerUserCooldowns = function (opaqueUserId, params) {
 
     // Check what type it is
     if (type === ACTIONS_TYPE.input) {
-        setUserCooldown(opaqueUserId, DateNow + CONFIG.userActionCooldownMs, type);
+        setUserCooldown(opaqueUserId, DateNow + CONFIG.userInputEventCooldownMs, type);
     } else if (type === ACTIONS_TYPE.mouse) {
         setUserCooldown(opaqueUserId, DateNow + CONFIG.userMouseEventCooldownMs, type);
     }
