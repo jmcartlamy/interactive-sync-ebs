@@ -1,7 +1,4 @@
-const color = require('color');
-
-const ACTIONS = {
-    initialTestColor: color('#6441A4'),
+const ACTIONS_TYPE = {
 };
 
 const STRINGS = {
@@ -18,6 +15,6 @@ const STRINGS = {
     sendUserInterface: 'Sending user interface %s to u:%s',
 };
 module.exports = {
-    ACTIONS: ACTIONS,
+    ACTIONS_TYPE: ACTIONS_TYPE,
     STRINGS: STRINGS,
 };
