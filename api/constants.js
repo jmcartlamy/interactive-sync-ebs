@@ -16,7 +16,7 @@ const STRINGS = {
     newMouseEvent: 'New %s for c:%s on behalf of u:%s with coord %s',
     mouseTypeErroned: "Parameter type is erroned. Must be 'mousedown' or 'mouseup'",
     mouseTypeInCooldown: 'Mouse event has reached the limit, please wait.',
-    userActionInCooldown: 'You have pushed this mouse event recently, please wait.',
+    userMouseTypeInCooldown: 'You have pushed this mouse event recently, please wait.',
     sendUserInterface: 'Sending user interface %s to u:%s',
 };
 module.exports = {

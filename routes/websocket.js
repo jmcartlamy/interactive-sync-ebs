@@ -4,6 +4,7 @@ const apiTwitch = require('../twitch/api');
 const { WEBSOCKET } = require('../config/constants');
 const { verboseLog } = require('../config/log');
 const { setUserInterface } = require('../config/state');
+const { validateUserInterface } = require('./userInterface/validateUserInterface');
 
 let wss;
 const webSockets = {};
@@ -231,8 +232,22 @@ const onConnection = function () {
                 return ws.terminate();
             }
 
+            const { isValidUI, normalizedUI, errorUI } = validateUserInterface(body.data);
+
+            if (!isValidUI) {
+                verboseLog(WEBSOCKET.userInterfaceInvalidServer + ' | ip:' + ip, ws.channelId);
+                return ws.send(
+                    JSON.stringify({
+                        status: 'error',
+                        context: 'message',
+                        message: WEBSOCKET.userInterfaceInvalid,
+                        data: errorUI,
+                    })
+                );
+            }
+
             // Set user interface in state
-            setUserInterface(channelId, body.data);
+            setUserInterface(channelId, normalizedUI);
 
             // Send to broadcast twitch
             const messageToSend = {

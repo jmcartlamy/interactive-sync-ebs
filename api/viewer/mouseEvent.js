@@ -34,7 +34,7 @@ const mouseEventHandler = async function (req) {
 
     // Verify user don't bypass the cooldown for this mouse event
     if (actionIsInCooldownForUser(opaqueUserId, mouseType, DateNow)) {
-        throw Boom.notAcceptable(STRINGS.userActionInCooldown);
+        throw Boom.notAcceptable(STRINGS.userMouseTypeInCooldown);
     }
 
     // Use cooldown from user interface

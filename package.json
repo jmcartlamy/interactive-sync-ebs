@@ -1,37 +1,45 @@
 {
-  "name": "interactive-sync-ebs",
-  "version": "0.0.1",
-  "private": true,
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "node app",
-    "start:prod": "NODE_ENV=production node app"
-  },
-  "keywords": [
-    "twitch",
-    "extension"
-  ],
-  "prettier": {
-    "semi": true,
-    "singleQuote": true,
-    "printWidth": 100,
-    "tabWidth": 4
-  },
-  "license": "Apache-2.0",
-  "author": "Jean-Marie Cart-Lamy <jihem@cartlamy.com>",
-  "dependencies": {
-    "@hapi/boom": "^9.1.0",
-    "@hapi/hapi": "^20.0.0",
-    "@hapi/inert": "^6.0.2",
-    "commander": "^2.15.0",
-    "dotenv": "^8.2.0",
-    "joi": "^17.3.0",
-    "jsonwebtoken": "^8.2.0",
-    "request": "^2.85.0",
-    "ws": "^7.4.0"
-  },
-  "devDependencies": {
-    "prettier": "^2.1.2"
-  }
+    "name": "interactive-sync-ebs",
+    "version": "0.0.1",
+    "private": true,
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "node app",
+        "start:prod": "NODE_ENV=production node app",
+        "test": "jest"
+    },
+    "keywords": [
+        "twitch",
+        "extension"
+    ],
+    "prettier": {
+        "semi": true,
+        "singleQuote": true,
+        "printWidth": 100,
+        "tabWidth": 4
+    },
+    "jest": {
+        "clearMocks": true,
+        "coverageDirectory": "coverage",
+        "coverageProvider": "v8",
+        "testEnvironment": "node"
+    },
+    "license": "Apache-2.0",
+    "author": "Jean-Marie Cart-Lamy <jihem@cartlamy.com>",
+    "dependencies": {
+        "@hapi/boom": "^9.1.0",
+        "@hapi/hapi": "^20.0.0",
+        "@hapi/inert": "^6.0.2",
+        "commander": "^2.15.0",
+        "dotenv": "^8.2.0",
+        "joi": "^17.3.0",
+        "jsonwebtoken": "^8.2.0",
+        "request": "^2.85.0",
+        "ws": "^7.4.0"
+    },
+    "devDependencies": {
+        "jest": "^26.6.3",
+        "prettier": "^2.1.2"
+    }
 }

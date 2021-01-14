@@ -57,7 +57,7 @@ const WEBSOCKET = {
     connectionClose: 'Connection is terminated.',
     connectionCloseServer: 'Channel c:%s with user:%s disconnected.',
     connectionBroken: 'Channel c:%s has been disconnected for broken connection',
-    messageIncomplete: 'context or data is missing ; message is ignored.',
+    messageIncomplete: 'Context or data is missing ; message is ignored.',
     messageIncompleteServer: 'Channel c:%s: context or data is missing ; message is ignored.',
     userInterfaceSyntaxError:
         'A parsing error occured with the JSON received ; message is ignored.',
@@ -66,6 +66,9 @@ const WEBSOCKET = {
     userInterfaceLengthError: 'Size of the JSON received is too big ; message is ignored.',
     userInterfaceLengthErrorServer:
         'Channel c:%s: size of the JSON received is too big ; message is ignored.',
+    userInterfaceInvalid: 'JSON received is invalid ; message is ignored.',
+    userInterfaceInvalidServer:
+        'Channel c:%s: JSON received is invalid ; message is ignored.',
     undefinedChannelIdMessage:
         'For unknown reasons, channelID is undefined ; connection will be terminated.',
     messageError: 'Error during transfer to Twitch API: %s',
