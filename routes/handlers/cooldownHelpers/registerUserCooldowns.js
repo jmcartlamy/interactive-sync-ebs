@@ -1,4 +1,4 @@
-const { setUserCooldown, setUserActionCooldown } = require('../../../config/state');
+const { setUserCooldown, setUserActionCooldown } = require('../../../db/state');
 const { CONFIG } = require('../../../config/constants');
 const { ACTIONS_TYPE } = require('../../constants');
 

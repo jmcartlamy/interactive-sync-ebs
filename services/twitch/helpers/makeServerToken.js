@@ -1,6 +1,6 @@
 const jsonwebtoken = require('jsonwebtoken');
-const { CONFIG } = require('../../config/constants');
-const { ownerId, secret } = require('../../config/env');
+const { CONFIG } = require('../../../config/constants');
+const { ownerId, secret } = require('../../../config/env');
 
 /**
  * Create and return a JWT for use by this service.

@@ -2,7 +2,7 @@ const {
     getUserActionCooldown,
     getUserCooldown,
     getChannelActionCooldown,
-} = require('../../../config/state');
+} = require('../../../db/state');
 
 /**
  *  Bot abuse prevention:  don't allow a user to spam.

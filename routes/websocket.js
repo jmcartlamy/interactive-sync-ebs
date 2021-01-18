@@ -1,10 +1,10 @@
 const WebSocket = require('ws');
 
-const apiTwitch = require('../twitch/api');
+const apiTwitch = require('../services/twitch/api');
 const { WEBSOCKET } = require('../config/constants');
 const { verboseLog } = require('../config/log');
-const { setUserInterface } = require('../config/state');
-const { validateUserInterface } = require('./userInterface/validateUserInterface');
+const { setUserInterface } = require('../db/state');
+const { validateUserInterface } = require('../utils/validation/validateUserInterface');
 
 let wss;
 const webSockets = {};

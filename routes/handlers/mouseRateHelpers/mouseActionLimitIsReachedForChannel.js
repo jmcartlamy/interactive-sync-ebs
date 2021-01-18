@@ -1,5 +1,5 @@
 const { CONFIG } = require('../../../config/constants');
-const { getChannelActionCooldown } = require('../../../config/state');
+const { getChannelActionCooldown } = require('../../../db/state');
 const { registerMouseActionForChannel } = require('./registerMouseActionForChannel');
 
 /**

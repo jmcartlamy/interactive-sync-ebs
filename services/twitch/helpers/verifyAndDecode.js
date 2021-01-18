@@ -1,7 +1,7 @@
 const jsonwebtoken = require('jsonwebtoken');
 const Boom = require('@hapi/boom');
-const { secret } = require('../../config/env');
-const { CONFIG, API_TWITCH } = require('../../config/constants');
+const { secret } = require('../../../config/env');
+const { CONFIG, API_TWITCH } = require('../../../config/constants');
 
 /**
  * Verify the header and the enclosed JWT.

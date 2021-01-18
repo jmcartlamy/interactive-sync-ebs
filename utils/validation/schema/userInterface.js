@@ -2,7 +2,7 @@ const Joi = require('joi');
 
 const REGEX_ID_SPECIFICATION_HTML4 = /^[A-Za-z]+[\w\-\:\.]*$/;
 
-const schemaExtensionComponent = Joi.object({
+const extensionComponentSchema = Joi.object({
     type: Joi.string().valid('title', 'input').required(),
     name: Joi.string()
         .pattern(REGEX_ID_SPECIFICATION_HTML4)
@@ -13,7 +13,7 @@ const schemaExtensionComponent = Joi.object({
     placeholder: Joi.string().allow('').max(32),
 });
 
-const schemaComponent = Joi.object({
+const componentSchema = Joi.object({
     type: Joi.string().valid('title', 'button').required(),
     name: Joi.string()
         .pattern(REGEX_ID_SPECIFICATION_HTML4)
@@ -31,21 +31,21 @@ const schemaComponent = Joi.object({
         submit: Joi.object({
             label: Joi.string().allow('').max(64).default('Submit'),
         }).default({ label: 'Submit' }),
-        components: Joi.array().items(schemaExtensionComponent).min(1).max(3).unique('name'),
+        components: Joi.array().items(extensionComponentSchema).min(1).max(3).unique('name'),
     }),
 });
 
-const schemaObjectComponent = Joi.object({
-    components: Joi.array().items(schemaComponent).min(1).max(4).unique('name'),
+const objectComponentSchema = Joi.object({
+    components: Joi.array().items(componentSchema).min(1).max(4).unique('name'),
 });
 
 const userInterfaceSchema = Joi.object({
     id: Joi.string().alphanum().max(64).required(),
     mobile: Joi.object({
         title: Joi.string().min(2).max(96),
-        components: Joi.array().items(schemaComponent).min(1).max(4).unique('name'),
+        components: Joi.array().items(componentSchema).min(1).max(4).unique('name'),
     }),
-    panel: schemaObjectComponent,
+    panel: objectComponentSchema,
     video_overlay: Joi.object({
         mouse: Joi.array()
             .items(
@@ -60,10 +60,10 @@ const userInterfaceSchema = Joi.object({
             .min(1)
             .max(2)
             .unique('type'),
-        left: schemaObjectComponent,
-        bottom: schemaObjectComponent,
-        right: schemaObjectComponent,
-        top: schemaObjectComponent,
+        left: objectComponentSchema,
+        bottom: objectComponentSchema,
+        right: objectComponentSchema,
+        top: objectComponentSchema,
     }),
 }).empty({});
 

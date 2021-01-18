@@ -1,20 +1,20 @@
 const Boom = require('@hapi/boom');
 
 const { STRINGS, ACTIONS_TYPE } = require('../constants');
-const { verifyAndDecode } = require('../../twitch/helpers/verifyAndDecode');
+const { verifyAndDecode } = require('../../services/twitch/helpers/verifyAndDecode');
 const { verboseLog } = require('../../config/log');
-const { setChannelActionCooldown } = require('../../config/state');
-const { attemptActionBroadcast } = require('./helpers/attemptActionBroadcast');
-const { sendMessageToClient } = require('../../routes/websocket');
-const { retrieveDisplayName } = require('./helpers/retrieveDisplayName');
+const { setChannelActionCooldown } = require('../../db/state');
+const { attemptActionBroadcast } = require('./twitchHelpers/attemptActionBroadcast');
+const { sendMessageToClient } = require('../websocket');
+const { retrieveDisplayName } = require('./twitchHelpers/retrieveDisplayName');
 const { CONFIG } = require('../../config/constants');
-const { findCooldownByViewAndActionId } = require('./helpers/findCooldownByViewAndActionId');
-const { registerUserCooldowns } = require('./helpers/registerUserCooldowns');
+const { findCooldownByViewAndActionId } = require('./cooldownHelpers/findCooldown');
+const { registerUserCooldowns } = require('./cooldownHelpers/registerUserCooldowns');
 const {
     userIsInCooldown,
     actionIsInCooldownForChannel,
     actionIsInCooldownForUser,
-} = require('./helpers/cooldown');
+} = require('./cooldownHelpers/isInCooldown');
 
 /**
  * Handle an input event request to make an action

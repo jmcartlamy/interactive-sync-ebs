@@ -1,9 +1,9 @@
 const request = require('request');
 
 const { setTokens } = require('./token');
-const { API_TWITCH } = require('../config/constants');
-const { clientId, clientSecret } = require('../config/env');
-const { verboseLog } = require('../config/log');
+const { API_TWITCH } = require('../../config/constants');
+const { clientId, clientSecret } = require('../../config/env');
+const { verboseLog } = require('../../config/log');
 
 const retrieveTokens = function () {
     return new Promise(function (resolve, reject) {

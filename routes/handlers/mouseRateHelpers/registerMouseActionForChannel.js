@@ -1,4 +1,4 @@
-const { setChannelActionCooldown } = require('../../../config/state');
+const { setChannelActionCooldown } = require('../../../db/state');
 
 /**
  * Register to limit click per second for mouse event

@@ -1,4 +1,4 @@
-const { userInterfaceSchema } = require('./userInterfaceSchema');
+const { userInterfaceSchema } = require('./schema/userInterface');
 
 const validateUserInterface = function (userInterface) {
     const result = userInterfaceSchema.validate(userInterface, {

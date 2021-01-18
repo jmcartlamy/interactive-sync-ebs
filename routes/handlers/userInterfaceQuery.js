@@ -1,7 +1,7 @@
-const { verifyAndDecode } = require('../../twitch/helpers/verifyAndDecode');
+const { verifyAndDecode } = require('../../services/twitch/helpers/verifyAndDecode');
 const { STRINGS } = require('../constants');
 const { verboseLog } = require('../../config/log');
-const { getUserInterface } = require('../../config/state');
+const { getUserInterface } = require('../../db/state');
 
 /**
  * Handle a viewer requesting the user interface

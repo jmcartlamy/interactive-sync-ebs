@@ -1,16 +1,16 @@
 const Boom = require('@hapi/boom');
 
 const { STRINGS, ACTIONS_TYPE } = require('../constants');
-const { verifyAndDecode } = require('../../twitch/helpers/verifyAndDecode');
+const { verifyAndDecode } = require('../../services/twitch/helpers/verifyAndDecode');
 const { verboseLog } = require('../../config/log');
-const { sendMessageToClient } = require('../../routes/websocket');
-const { retrieveDisplayName } = require('./helpers/retrieveDisplayName');
+const { sendMessageToClient } = require('../websocket');
+const { retrieveDisplayName } = require('./twitchHelpers/retrieveDisplayName');
 const {
     mouseActionLimitIsReachedForChannel,
-} = require('./helpers/mouseActionLimitIsReachedForChannel');
-const { userIsInCooldown, actionIsInCooldownForUser } = require('./helpers/cooldown');
-const { registerUserCooldowns } = require('./helpers/registerUserCooldowns');
-const { findCooldownByMouseType } = require('./helpers/findCooldownByMouseType');
+} = require('./mouseRateHelpers/mouseActionLimitIsReachedForChannel');
+const { userIsInCooldown, actionIsInCooldownForUser } = require('./cooldownHelpers/isInCooldown');
+const { registerUserCooldowns } = require('./cooldownHelpers/registerUserCooldowns');
+const { findCooldownByMouseType } = require('./cooldownHelpers/findCooldown');
 
 /**
  * Handle a mouse event request to make an action

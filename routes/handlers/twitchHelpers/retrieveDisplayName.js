@@ -1,5 +1,5 @@
-const apiTwitch = require('../../../twitch/api');
-const { getTwitchUserObject, setTwitchUserObject } = require('../../../config/state');
+const apiTwitch = require('../../../services/twitch/api');
+const { getTwitchUserObject, setTwitchUserObject } = require('../../../db/state');
 const { API_TWITCH } = require('../../../config/constants');
 
 /**

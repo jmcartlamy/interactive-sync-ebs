@@ -10,13 +10,13 @@ const server = require('./config/server');
 /* ------------------------------------------- */
 
 const { CONFIG, SERVER } = require('./config/constants');
-const allRoutes = require('./routes/all');
+const routes = require('./routes/routes');
 const socket = require('./routes/websocket');
-const oauth2 = require('./twitch/oauth2');
+const oauth2 = require('./services/twitch/oauth2');
 
 (async () => {
     // Set routes
-    await allRoutes(server);
+    await routes(server);
 
     // Start the server.
     await server.start();

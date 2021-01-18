@@ -1,5 +1,5 @@
-const apiTwitch = require('../../../twitch/api');
-const { getChannelCooldown, setChannelCooldown } = require('../../../config/state');
+const apiTwitch = require('../../../services/twitch/api');
+const { getChannelCooldown, setChannelCooldown } = require('../../../db/state');
 const { STRINGS, ACTIONS_TYPE } = require('../../constants');
 const { CONFIG } = require('../../../config/constants');
 const { verboseLog } = require('../../../config/log');

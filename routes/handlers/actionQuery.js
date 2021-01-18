@@ -1,6 +1,6 @@
 const { verboseLog } = require('../../config/log');
-const { getChannelAllActions } = require('../../config/state');
-const { verifyAndDecode } = require('../../twitch/helpers/verifyAndDecode');
+const { getChannelAllActions } = require('../../db/state');
+const { verifyAndDecode } = require('../../services/twitch/helpers/verifyAndDecode');
 const { STRINGS } = require('../constants');
 
 /**

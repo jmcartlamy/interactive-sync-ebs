@@ -2,9 +2,9 @@ const request = require('request');
 
 const { makeServerToken } = require('./helpers/makeServerToken');
 const { getAccessToken } = require('./token');
-const { CONFIG, API_TWITCH } = require('../config/constants');
-const { clientId } = require('../config/env');
-const { verboseLog } = require('../config/log');
+const { CONFIG, API_TWITCH } = require('../../config/constants');
+const { clientId } = require('../../config/env');
+const { verboseLog } = require('../../config/log');
 
 const sendBroadcastMessage = function (channelId, message) {
     // Set the HTTP headers required by the Twitch API.
