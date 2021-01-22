@@ -184,6 +184,24 @@ describe('user interface contains a correct `components[]` item object', () => {
             errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.alphanum)),
         });
     });
+    test('component contains a style object', () => {
+        const data = {
+            id: '1',
+            panel: {
+                components: [
+                    {
+                        type: 'title',
+                        name: 'name',
+                        style: {},
+                    },
+                ],
+            },
+        };
+        const value = validateUserInterface(data);
+
+        expect(value).toMatchObject({ isValidUI: true });
+        expect(value).toMatchObject({ normalizedUI: data });
+    });
     test('component contains a cooldown with default values', () => {
         const data = {
             id: '1',
@@ -250,6 +268,43 @@ describe('user interface contains a correct `components[]` item object', () => {
         expect(value).toMatchObject({ isValidUI: true });
         expect(value).toMatchObject({ normalizedUI: result });
     });
+    test('component contains a cooldown.style object', () => {
+        const data = {
+            id: '1',
+            panel: {
+                components: [
+                    {
+                        type: 'title',
+                        name: 'name',
+                        cooldown: {
+                            duration: 5000,
+                            broadcast: 0,
+                            style: {},
+                        },
+                    },
+                ],
+            },
+        };
+        const result = {
+            id: '1',
+            panel: {
+                components: [
+                    {
+                        type: 'title',
+                        name: 'name',
+                        cooldown: {
+                            duration: 5000,
+                            broadcast: false,
+                            style: {},
+                        },
+                    },
+                ],
+            },
+        };
+        const value = validateUserInterface(data);
+        expect(value).toMatchObject({ isValidUI: true });
+        expect(value).toMatchObject({ normalizedUI: result });
+    });
     test('component contains an extension object with default values', () => {
         const data = {
             id: '1',
@@ -283,7 +338,7 @@ describe('user interface contains a correct `components[]` item object', () => {
         expect(value).toMatchObject({ isValidUI: true });
         expect(value).toMatchObject({ normalizedUI: result });
     });
-    test('component contains a extension.title with minimum length', () => {
+    test('component contains a extension.title.label with minimum length', () => {
         const data = {
             id: '1',
             panel: {
@@ -292,7 +347,9 @@ describe('user interface contains a correct `components[]` item object', () => {
                         type: 'title',
                         name: 'name',
                         extension: {
-                            title: 'a',
+                            title: {
+                                label: 'a',
+                            },
                         },
                     },
                 ],
@@ -306,7 +363,29 @@ describe('user interface contains a correct `components[]` item object', () => {
             ),
         });
     });
-    test('component contains a extension.label which allow an empty string', () => {
+    test('component contains a extension.title.style object', () => {
+        const data = {
+            id: '1',
+            panel: {
+                components: [
+                    {
+                        type: 'title',
+                        name: 'name',
+                        extension: {
+                            title: {
+                                label: 'label',
+                                style: {},
+                            },
+                        },
+                    },
+                ],
+            },
+        };
+        const value = validateUserInterface(data);
+        expect(value).toMatchObject({ isValidUI: true });
+        expect(value).toMatchObject({ normalizedUI: data });
+    });
+    test('component contains a extension.submit.label which allow an empty string', () => {
         const data = {
             id: '1',
             panel: {
@@ -318,6 +397,47 @@ describe('user interface contains a correct `components[]` item object', () => {
                             submit: {
                                 label: '',
                             },
+                        },
+                    },
+                ],
+            },
+        };
+        const value = validateUserInterface(data);
+        expect(value).toMatchObject({ isValidUI: true });
+        expect(value).toMatchObject({ normalizedUI: data });
+    });
+    test('component contains a extension.submit.style object', () => {
+        const data = {
+            id: '1',
+            panel: {
+                components: [
+                    {
+                        type: 'title',
+                        name: 'name',
+                        extension: {
+                            submit: {
+                                label: '',
+                                style: {},
+                            },
+                        },
+                    },
+                ],
+            },
+        };
+        const value = validateUserInterface(data);
+        expect(value).toMatchObject({ isValidUI: true });
+        expect(value).toMatchObject({ normalizedUI: data });
+    });
+    test('component contains a extension.style object', () => {
+        const data = {
+            id: '1',
+            panel: {
+                components: [
+                    {
+                        type: 'title',
+                        name: 'name',
+                        extension: {
+                            style: {},
                         },
                     },
                 ],
@@ -385,7 +505,9 @@ describe('user interface contains a correct `components[]` item object', () => {
 
         expect(value).toMatchObject({ isValidUI: false });
         expect(value).toMatchObject({
-            errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.lessOrEqualArray + ' 3')),
+            errorUI: expect.stringMatching(
+                new RegExp(JOI_VALIDATION_ERROR.lessOrEqualArray + ' 3')
+            ),
         });
     });
     test('component contains a extension.components without duplicate name', () => {

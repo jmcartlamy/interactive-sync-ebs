@@ -128,4 +128,16 @@ describe('user interface contains a correct `components[].extension.components[]
         expect(value).toMatchObject({ isValidUI: true });
         expect(value).toMatchObject({ normalizedUI: insertExtensionComponents(data) });
     });
+    test('component contains a style object', () => {
+        const data = {
+            type: 'title',
+            name: 'name',
+            label: 'label',
+            style: {},
+        };
+        const value = validateUserInterface(insertExtensionComponents(data));
+
+        expect(value).toMatchObject({ isValidUI: true });
+        expect(value).toMatchObject({ normalizedUI: insertExtensionComponents(data) });
+    });
 });

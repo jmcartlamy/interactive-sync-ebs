@@ -1,5 +1,3 @@
-// TODO VERIFY USER INTERFACE JSON IN WEBSOCKET
-
 const { getUserInterface } = require('../../../db/state');
 
 const findCooldownByViewAndActionId = function (view, channelId, actionId) {

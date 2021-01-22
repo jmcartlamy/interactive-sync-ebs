@@ -1,3 +1,4 @@
+const { JOI_VALIDATION_ERROR } = require('../constants');
 const { validateUserInterface } = require('../validateUserInterface');
 
 describe('user interface is fully correct', () => {
@@ -5,7 +6,9 @@ describe('user interface is fully correct', () => {
         const data = {
             id: '1',
             mobile: {
-                title: 'Créez des personnages avec les boutons',
+                title: {
+                    label: 'Créez des personnages avec les boutons',
+                },
                 components: [
                     {
                         type: 'button',
@@ -110,7 +113,9 @@ describe('user interface is fully correct', () => {
         const data = {
             id: '1',
             mobile: {
-                title: 'Créez des rebelles avec les boutons',
+                title: {
+                    label: 'Créez des rebelles avec les boutons',
+                },
                 components: [
                     {
                         type: 'button',
@@ -118,7 +123,9 @@ describe('user interface is fully correct', () => {
                         label: 'Créer un rebelle',
                         keyCode: 'Digit1',
                         extension: {
-                            title: 'Créer un REBELLE',
+                            title: {
+                                label: 'Créer un REBELLE',
+                            },
                             submit: {
                                 label: '#YOLO',
                             },
@@ -150,7 +157,9 @@ describe('user interface is fully correct', () => {
                         label: 'Créer un rebelle',
                         keyCode: 'Digit1',
                         extension: {
-                            title: 'Créer un REBELLE',
+                            title: {
+                                label: 'Créer un REBELLE',
+                            },
                             submit: {
                                 label: '#YOLO',
                             },
@@ -187,7 +196,9 @@ describe('user interface is fully correct', () => {
                             label: 'Créer un rebelle',
                             keyCode: 'Digit1',
                             extension: {
-                                title: 'Créer un REBELLE',
+                                title: {
+                                    label: 'Créer un REBELLE',
+                                },
                                 submit: {
                                     label: '#YOLO',
                                 },
@@ -203,6 +214,82 @@ describe('user interface is fully correct', () => {
                             cooldown: {
                                 duration: 10000,
                                 broadcast: false,
+                            },
+                        },
+                    ],
+                },
+            },
+        };
+        const value = validateUserInterface(data);
+        expect(value).toMatchObject({ isValidUI: true });
+        expect(value).toMatchObject({ normalizedUI: data });
+    });
+    test('an third example of user interface', () => {
+        const data = {
+            id: '1',
+            video_overlay: {
+                bottom: {
+                    components: [
+                        {
+                            type: 'title',
+                            label: 'Créez des rebelles avec les boutons',
+                            style: {
+                                backgroundColor: '#453298',
+                                color: '#fff',
+                            },
+                        },
+                    ],
+                },
+                left: {
+                    components: [
+                        {
+                            type: 'button',
+                            name: 'action-rebel',
+                            label: 'Créer un rebelle',
+                            keyCode: 'Digit1',
+                            extension: {
+                                title: {
+                                    label: 'Créer un REBELLE',
+                                    style: {
+                                        backgroundColor: '#453298',
+                                        color: '#fff',
+                                    },
+                                },
+                                style: {
+                                    backgroundColor: '#8474c9',
+                                    color: '#fff',
+                                },
+                                submit: {
+                                    label: '#YOLO',
+                                    style: {
+                                        backgroundColor: '#453298',
+                                        color: '#fff',
+                                    },
+                                },
+                                components: [
+                                    {
+                                        type: 'input',
+                                        name: 'ext-teaser-quote',
+                                        label: 'Votre discours',
+                                        style: {
+                                            backgroundColor: '#453298',
+                                        },
+                                        placeholder: 'Ecrivez ici',
+                                    },
+                                ],
+                            },
+                            style: {
+                                backgroundColor: '#453298',
+                                color: '#fff',
+                            },
+                            cooldown: {
+                                duration: 20000,
+                                broadcast: false,
+                                style: {
+                                    backgroundColor: 'rgba(25,74,22, 0.7)',
+                                    color: '#fff',
+                                    fontSize: 26,
+                                },
                             },
                         },
                     ],

@@ -11,7 +11,7 @@ const STRINGS = {
     actionInCooldown: 'Action has been pushed recently, please wait.',
     userActionInCooldown: 'You have pushed this action recently, please wait.',
     userInCooldown: 'You trying to bypass the cooldown. Shame.',
-    actionViewErroned: "Parameter view is erroned. Must be 'mobile', 'panel_' or 'video_overlay'",
+    actionViewErroned: "Parameter view is erroned. Must be 'mobile', 'panel' or 'video_overlay'",
     actionIdErroned: "This ID doesn't exist in the user interface.",
     newMouseEvent: 'New %s for c:%s on behalf of u:%s with coord %s',
     mouseTypeErroned: "Parameter type is erroned. Must be 'mousedown' or 'mouseup'",

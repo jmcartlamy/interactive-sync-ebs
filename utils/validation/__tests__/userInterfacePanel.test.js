@@ -85,7 +85,9 @@ describe('user interface contains a correct panel object', () => {
 
         expect(value).toMatchObject({ isValidUI: false });
         expect(value).toMatchObject({
-            errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.lessOrEqualArray + ' 4')),
+            errorUI: expect.stringMatching(
+                new RegExp(JOI_VALIDATION_ERROR.lessOrEqualArray + ' 4')
+            ),
         });
     });
     test('panel contains a `components` array without duplicate items', () => {
@@ -157,5 +159,17 @@ describe('user interface contains a correct panel object', () => {
                 new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[title, button\\]')
             ),
         });
+    });
+    test('panel contains a `style` object', () => {
+        const data = {
+            id: '1',
+            panel: {
+                style: {},
+            },
+        };
+        const value = validateUserInterface(data);
+
+        expect(value).toMatchObject({ isValidUI: true });
+        expect(value).toMatchObject({ normalizedUI: data });
     });
 });

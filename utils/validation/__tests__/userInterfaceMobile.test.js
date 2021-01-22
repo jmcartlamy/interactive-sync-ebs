@@ -10,17 +10,17 @@ describe('user interface contains a correct mobile object', () => {
         expect(value).toMatchObject({ normalizedUI: data });
     });
     test('mobile contains an optional title', () => {
-        const data = { id: '1', mobile: { title: 'title' } };
+        const data = { id: '1', mobile: { title: { label: 'label' } } };
         const value = validateUserInterface(data);
 
         expect(value).toMatchObject({ isValidUI: true });
         expect(value).toMatchObject({ normalizedUI: data });
     });
-    test('mobile contains an optional title with a length > 1 character', () => {
+    test('mobile contains an optional title.label with a length >= 2 characters', () => {
         const data = {
             id: '1',
             mobile: {
-                title: 'a',
+                title: { label: 'a' },
             },
         };
         const value = validateUserInterface(data);
@@ -32,20 +32,39 @@ describe('user interface contains a correct mobile object', () => {
             ),
         });
     });
-    test('mobile contains an optional title with a length <= 64 characters', () => {
+    test('mobile contains an optional title.label with a length <= 64 characters', () => {
         const data = {
             id: '1',
             mobile: {
-                title:
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ac ligula aliquam, vulputate erat sed, vestibulum lectus. Donec tincidunt',
+                title: {
+                    label:
+                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ac ligula aliquam, vulputate erat sed, vestibulum lectus. Donec tincidunt',
+                },
             },
         };
         const value = validateUserInterface(data);
 
         expect(value).toMatchObject({ isValidUI: false });
         expect(value).toMatchObject({
-            errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.lessOrEqualLengthString)),
+            errorUI: expect.stringMatching(
+                new RegExp(JOI_VALIDATION_ERROR.lessOrEqualLengthString)
+            ),
         });
+    });
+    test('mobile contains an optional title.style', () => {
+        const data = {
+            id: '1',
+            mobile: {
+                title: {
+                    label: 'title',
+                    style: {},
+                },
+            },
+        };
+        const value = validateUserInterface(data);
+
+        expect(value).toMatchObject({ isValidUI: true });
+        expect(value).toMatchObject({ normalizedUI: data });
     });
     test('mobile has a `components` array which must contains 1 item', () => {
         const value1 = validateUserInterface({
@@ -114,7 +133,9 @@ describe('user interface contains a correct mobile object', () => {
 
         expect(value).toMatchObject({ isValidUI: false });
         expect(value).toMatchObject({
-            errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.lessOrEqualArray + ' 4')),
+            errorUI: expect.stringMatching(
+                new RegExp(JOI_VALIDATION_ERROR.lessOrEqualArray + ' 4')
+            ),
         });
     });
     test('mobile contains a `components` array without duplicate items', () => {

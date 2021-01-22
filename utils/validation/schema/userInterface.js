@@ -2,6 +2,28 @@ const Joi = require('joi');
 
 const REGEX_ID_SPECIFICATION_HTML4 = /^[A-Za-z]+[\w\-\:\.]*$/;
 
+const AUTHORIZED_STYLE = [
+    'backgroundColor',
+    'background',
+    'color',
+    'fontSize',
+    'width',
+    'height',
+    'position',
+    'display',
+    'margin',
+    'padding',
+    'justifyContent',
+    'alignItems',
+];
+
+const styleSchema = Joi.object()
+    .pattern(Joi.string().valid(...AUTHORIZED_STYLE), [
+        Joi.string().allow('').max(128, 'utf8'),
+        Joi.number().min(-10000).max(10000),
+    ])
+    .max(8);
+
 const extensionComponentSchema = Joi.object({
     type: Joi.string().valid('title', 'input').required(),
     name: Joi.string()
@@ -10,6 +32,7 @@ const extensionComponentSchema = Joi.object({
         .max(64)
         .when('type', { is: 'input', then: Joi.required() }),
     label: Joi.string().allow('').max(96),
+    style: styleSchema,
     placeholder: Joi.string().allow('').max(32),
 });
 
@@ -22,15 +45,22 @@ const componentSchema = Joi.object({
         .when('type', { is: 'button', then: Joi.required() }),
     label: Joi.string().allow('').max(96).default('A label'),
     keyCode: Joi.string().alphanum().max(64),
+    style: styleSchema,
     cooldown: Joi.object({
         duration: Joi.number().min(3000).max(60000).default(10000),
         broadcast: Joi.boolean().truthy(1).falsy(0).default(true),
+        style: styleSchema,
     }).default({ duration: 10000, broadcast: true }),
     extension: Joi.object({
-        title: Joi.string().min(2).max(96),
+        title: {
+            label: Joi.string().min(2).max(96),
+            style: styleSchema,
+        },
         submit: Joi.object({
             label: Joi.string().allow('').max(64).default('Submit'),
+            style: styleSchema,
         }).default({ label: 'Submit' }),
+        style: styleSchema,
         components: Joi.array().items(extensionComponentSchema).min(1).max(3).unique('name'),
     }),
 });
@@ -42,10 +72,17 @@ const objectComponentSchema = Joi.object({
 const userInterfaceSchema = Joi.object({
     id: Joi.string().alphanum().max(64).required(),
     mobile: Joi.object({
-        title: Joi.string().min(2).max(96),
+        title: {
+            label: Joi.string().min(2).max(96),
+            style: styleSchema,
+        },
+        style: styleSchema,
         components: Joi.array().items(componentSchema).min(1).max(4).unique('name'),
     }),
-    panel: objectComponentSchema,
+    panel: Joi.object({
+        style: styleSchema,
+        components: Joi.array().items(componentSchema).min(1).max(4).unique('name'),
+    }),
     video_overlay: Joi.object({
         mouse: Joi.array()
             .items(
