@@ -136,47 +136,23 @@ const onConnection = function () {
             return ws.terminate();
         }
 
-        // Search channel with display name
-        let channelId;
-        try {
-            const body = await apiTwitch.searchChannels(displayName, {
-                clientId,
-                token: accessToken,
-            });
-            if (body.data && body.data.length) {
-                channelId = body.data[0].id;
-            }
-        } catch (err) {}
+        // ChannelID is the same ID than userId
+        const channelId = userId;
+        ws.channelId = channelId;
+        webSockets[channelId] = ws;
 
-        if (!channelId) {
-            verboseLog(WEBSOCKET.undefinedChannelId + ' | ip:' + ip);
-            ws.send(
-                JSON.stringify({
-                    status: 'error',
-                    context: 'connection',
-                    message: WEBSOCKET.undefinedChannelId,
-                    data: null,
-                })
-            );
-            return ws.terminate();
-        } else {
-            ws.channelId = channelId;
-            ws.userId = userId;
-            webSockets[channelId] = ws;
-
-            verboseLog(WEBSOCKET.connectionSuccessServer, channelId, userId, displayName, ip);
-            ws.send(
-                JSON.stringify({
-                    status: 'ok',
-                    context: 'connection',
-                    message: WEBSOCKET.connectionSuccess,
-                    data: {
-                        displayName,
-                        channelId,
-                    },
-                })
-            );
-        }
+        verboseLog(WEBSOCKET.connectionSuccessServer, channelId, displayName, ip);
+        ws.send(
+            JSON.stringify({
+                status: 'ok',
+                context: 'connection',
+                message: WEBSOCKET.connectionSuccess,
+                data: {
+                    displayName,
+                    channelId,
+                },
+            })
+        );
 
         ws.on('message', async function incoming(message) {
             const channelId = ws.channelId;
@@ -301,7 +277,7 @@ const onConnection = function () {
             } catch (err) {
                 verboseLog(err);
             }
-            verboseLog(WEBSOCKET.connectionCloseServer, channelId, ws.userId);
+            verboseLog(WEBSOCKET.connectionCloseServer, channelId, displayName);
         });
     });
 };

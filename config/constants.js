@@ -53,9 +53,9 @@ const WEBSOCKET = {
     retrieveUserObjectError: 'An error occurred to retrieve user details: ',
     undefinedChannelId: 'We cant find channel_id with the user_id ; connection will be terminated.',
     connectionSuccess: 'You are well connected with the channel',
-    connectionSuccessServer: 'Channel c:%s with user:%s named "%s" connected with ip:%s',
+    connectionSuccessServer: 'Channel c:%s with user named "%s" connected with ip:%s',
     connectionClose: 'Connection is terminated.',
-    connectionCloseServer: 'Channel c:%s with user:%s disconnected.',
+    connectionCloseServer: 'Channel c:%s with user named %s disconnected.',
     connectionBroken: 'Channel c:%s has been disconnected for broken connection',
     messageIncomplete: 'Context or data is missing ; message is ignored.',
     messageIncompleteServer: 'Channel c:%s: context or data is missing ; message is ignored.',
@@ -67,8 +67,7 @@ const WEBSOCKET = {
     userInterfaceLengthErrorServer:
         'Channel c:%s: size of the JSON received is too big ; message is ignored.',
     userInterfaceInvalid: 'JSON received is invalid ; message is ignored.',
-    userInterfaceInvalidServer:
-        'Channel c:%s: JSON received is invalid ; message is ignored.',
+    userInterfaceInvalidServer: 'Channel c:%s: JSON received is invalid ; message is ignored.',
     undefinedChannelIdMessage:
         'For unknown reasons, channelID is undefined ; connection will be terminated.',
     messageError: 'Error during transfer to Twitch API: %s',
