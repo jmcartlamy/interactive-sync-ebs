@@ -1,4 +1,3 @@
-const { JOI_VALIDATION_ERROR } = require('../constants');
 const { validateUserInterface } = require('../validateUserInterface');
 
 describe('user interface is fully correct', () => {

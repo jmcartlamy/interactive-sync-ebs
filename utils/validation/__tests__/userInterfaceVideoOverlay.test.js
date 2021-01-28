@@ -111,6 +111,72 @@ describe('user interface contains a correct video_overlay object', () => {
         expect(value).toMatchObject({ isValidUI: true });
         expect(value).toMatchObject({ normalizedUI: result });
     });
+    test('video_overlay has a `mouse[x].cooldown without duration', () => {
+        const data = {
+            id: '1',
+            video_overlay: {
+                mouse: [
+                    {
+                        type: 'mouseup',
+                        cooldown: {
+                            limit: 2,
+                        },
+                    },
+                ],
+            },
+        };
+        const result = {
+            id: '1',
+            video_overlay: {
+                mouse: [
+                    {
+                        type: 'mouseup',
+                        cooldown: {
+                            duration: 3000,
+                            limit: 2,
+                        },
+                    },
+                ],
+            },
+        };
+        const value = validateUserInterface(data);
+
+        expect(value).toMatchObject({ isValidUI: true });
+        expect(value).toMatchObject({ normalizedUI: result });
+    });
+    test('video_overlay has a `mouse[x].cooldown without limit', () => {
+        const data = {
+            id: '1',
+            video_overlay: {
+                mouse: [
+                    {
+                        type: 'mouseup',
+                        cooldown: {
+                            duration: 3000,
+                        },
+                    },
+                ],
+            },
+        };
+        const result = {
+            id: '1',
+            video_overlay: {
+                mouse: [
+                    {
+                        type: 'mouseup',
+                        cooldown: {
+                            duration: 3000,
+                            limit: 2,
+                        },
+                    },
+                ],
+            },
+        };
+        const value = validateUserInterface(data);
+
+        expect(value).toMatchObject({ isValidUI: true });
+        expect(value).toMatchObject({ normalizedUI: result });
+    });
     test('video_overlay has a `mouse` array which must contains <= 2 items', () => {
         const data = {
             id: '1',
@@ -132,7 +198,9 @@ describe('user interface contains a correct video_overlay object', () => {
 
         expect(value).toMatchObject({ isValidUI: false });
         expect(value).toMatchObject({
-            errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.lessOrEqualArray + ' 2')),
+            errorUI: expect.stringMatching(
+                new RegExp(JOI_VALIDATION_ERROR.lessOrEqualArray + ' 2')
+            ),
         });
     });
     test('video_overlay has a left|bottom|right|top property', () => {

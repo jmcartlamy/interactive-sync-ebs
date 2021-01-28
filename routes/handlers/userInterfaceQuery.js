@@ -14,7 +14,7 @@ const userInterfaceQueryHandler = function (req) {
     const { channel_id: channelId, opaque_user_id: opaqueUserId } = payload;
     const userInterface = getUserInterface(channelId);
     if (userInterface) {
-        verboseLog(STRINGS.sendUserInterface, userInterface, opaqueUserId);
+        verboseLog(STRINGS.sendUserInterface, channelId, opaqueUserId);
         return userInterface;
     }
     return null;

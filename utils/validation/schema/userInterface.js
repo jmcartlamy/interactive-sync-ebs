@@ -15,6 +15,9 @@ const AUTHORIZED_STYLE = [
     'padding',
     'justifyContent',
     'alignItems',
+    'borderImage',
+    'imageRendering',
+    'cursor',
 ];
 
 const styleSchema = Joi.object()
@@ -69,8 +72,14 @@ const objectComponentSchema = Joi.object({
     components: Joi.array().items(componentSchema).min(1).max(4).unique('name'),
 });
 
+const configSchema = Joi.object({
+    transparent: Joi.boolean().truthy(1).falsy(0).default(false),
+    ripple: Joi.boolean().truthy(1).falsy(0).default(true),
+}).default({ transparent: false, ripple: true });
+
 const userInterfaceSchema = Joi.object({
     id: Joi.string().alphanum().max(64).required(),
+    config: configSchema,
     mobile: Joi.object({
         title: {
             label: Joi.string().min(2).max(96),

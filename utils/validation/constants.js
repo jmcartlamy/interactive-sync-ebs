@@ -2,6 +2,7 @@ const JOI_VALIDATION_ERROR = {
     required: 'is required',
     string: 'must be a string',
     object: 'must be of type object',
+    boolean: 'must be a boolean',
     oneOf: 'must be one of',
     alphanum: 'must only contain alpha-numeric characters',
     pattern: 'fails to match the required pattern',
