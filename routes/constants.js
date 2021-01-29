@@ -1,6 +1,7 @@
 const ACTIONS_TYPE = {
     input: 'input',
-    mouse: 'mouse',
+    mouseUp: 'mouseup',
+    mouseDown: 'mousedown',
 };
 
 const STRINGS = {

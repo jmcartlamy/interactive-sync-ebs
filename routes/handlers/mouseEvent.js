@@ -20,15 +20,15 @@ const mouseEventHandler = async function (req) {
     const verifiedJWT = verifyAndDecode(req.headers.authorization);
     const { channel_id: channelId, opaque_user_id: opaqueUserId } = verifiedJWT;
     const DateNow = Date.now();
-    const { type: mouseType, clientX, clientY, F } = req.payload;
+    const { type: mouseType, clientX, clientY } = req.payload;
 
     // Verify type parameter
-    if (!['mousedown', 'mouseup'].includes(mouseType)) {
+    if (![ACTIONS_TYPE.mouseDown, ACTIONS_TYPE.mouseUp].includes(mouseType)) {
         throw Boom.badRequest(STRINGS.mouseTypeErroned);
     }
 
-    // Bot abuse prevention:  don't allow a user to spam the button.
-    if (userIsInCooldown(opaqueUserId, ACTIONS_TYPE.mouse, DateNow)) {
+    // Bot abuse prevention: don't allow a user to spam the button.
+    if (userIsInCooldown(opaqueUserId, mouseType, DateNow)) {
         throw Boom.tooManyRequests(STRINGS.mouseTypeInCooldown);
     }
 
