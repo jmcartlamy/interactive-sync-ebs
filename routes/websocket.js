@@ -3,7 +3,7 @@ const WebSocket = require('ws');
 const apiTwitch = require('../services/twitch/api');
 const { WEBSOCKET } = require('../config/constants');
 const { verboseLog } = require('../config/log');
-const { setUserInterface } = require('../db/state');
+const { getUserInterface, setUserInterface } = require('../db/state');
 const { validateUserInterface } = require('../utils/validation/validateUserInterface');
 
 let wss;
@@ -183,6 +183,7 @@ const onConnection = function () {
                     })
                 );
             }
+            // Test context and message
             if (!body.context || body.context !== 'user_interface' || !body.data) {
                 verboseLog(WEBSOCKET.messageIncompleteServer, ws.channelId);
                 return ws.send(
@@ -195,6 +196,7 @@ const onConnection = function () {
                 );
             }
 
+            // Verify channelId still exist
             if (!ws.channelId) {
                 verboseLog(WEBSOCKET.undefinedChannelIdMessage + ' | ip:' + ip);
                 ws.send(
@@ -208,6 +210,7 @@ const onConnection = function () {
                 return ws.terminate();
             }
 
+            // Validate user interface received
             const { isValidUI, normalizedUI, errorUI } = validateUserInterface(body.data);
 
             if (!isValidUI) {
@@ -218,6 +221,23 @@ const onConnection = function () {
                         context: 'message',
                         message: WEBSOCKET.userInterfaceInvalid,
                         data: errorUI,
+                    })
+                );
+            }
+
+            // Verify new UI's ID is not identical to previous UI's ID
+            const userInterface = getUserInterface(channelId);
+            if (userInterface && userInterface.id === body.data.id) {
+                verboseLog(WEBSOCKET.userInterfaceSameIdServer + ' | ip:' + ip, ws.channelId);
+                return ws.send(
+                    JSON.stringify({
+                        status: 'error',
+                        context: 'message',
+                        message: WEBSOCKET.userInterfaceSameId,
+                        data: {
+                            previousID: userInterface.id,
+                            newID: body.data.id,
+                        },
                     })
                 );
             }

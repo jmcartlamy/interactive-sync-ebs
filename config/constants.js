@@ -68,6 +68,10 @@ const WEBSOCKET = {
         'Channel c:%s: size of the JSON received is too big ; message is ignored.',
     userInterfaceInvalid: 'JSON received is invalid ; message is ignored.',
     userInterfaceInvalidServer: 'Channel c:%s: JSON received is invalid ; message is ignored.',
+    userInterfaceSameId:
+        'JSON received has an identical ID than the previous ; message is ignored.',
+    userInterfaceSameIdServer:
+        'Channel c:%s: JSON received has an identical ID than the previous ; message is ignored.',
     undefinedChannelIdMessage:
         'For unknown reasons, channelID is undefined ; connection will be terminated.',
     messageError: 'Error during transfer to Twitch API: %s',
