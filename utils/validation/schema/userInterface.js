@@ -27,6 +27,10 @@ const styleSchema = Joi.object()
     ])
     .max(8);
 
+const styleMouseSchema = Joi.object({
+    cursor: Joi.string().max(128, 'utf8'),
+});
+
 const extensionComponentSchema = Joi.object({
     type: Joi.string().valid('title', 'input').required(),
     name: Joi.string()
@@ -97,9 +101,11 @@ const userInterfaceSchema = Joi.object({
             .items(
                 Joi.object({
                     type: Joi.string().valid('mousedown', 'mouseup').required(),
+                    style: styleMouseSchema,
                     cooldown: Joi.object({
                         duration: Joi.number().min(1000).max(60000).default(3000),
                         limit: Joi.number().min(1).max(10).default(2),
+                        style: styleMouseSchema,
                     }).default({ duration: 3000, limit: 2 }),
                 })
             )
