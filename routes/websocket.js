@@ -248,7 +248,7 @@ const onConnection = function () {
             // Send to broadcast twitch
             const messageToSend = {
                 type: 'user_interface',
-                data: body.data,
+                data: normalizedUI,
             };
             try {
                 await apiTwitch.sendBroadcastMessage(channelId, messageToSend);
