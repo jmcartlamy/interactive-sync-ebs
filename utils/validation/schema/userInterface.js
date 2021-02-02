@@ -79,6 +79,7 @@ const objectComponentSchema = Joi.object({
 const configSchema = Joi.object({
     transparent: Joi.boolean().truthy(1).falsy(0).default(false),
     ripple: Joi.boolean().truthy(1).falsy(0).default(true),
+    forceTheme: Joi.string().valid('light', 'dark'),
 }).default({ transparent: false, ripple: true });
 
 const userInterfaceSchema = Joi.object({

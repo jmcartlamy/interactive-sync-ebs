@@ -88,4 +88,55 @@ describe('user interface contains a correct config object', () => {
             },
         });
     });
+    test('config contains a `forceTheme` property which allow only `light` and `dark`', () => {
+        const value1 = validateUserInterface({
+            id: '1',
+            config: {
+                forceTheme: 'light',
+            },
+        });
+
+        expect(value1).toMatchObject({ isValidUI: true });
+        expect(value1).toMatchObject({
+            normalizedUI: {
+                id: '1',
+                config: {
+                    ripple: true,
+                    transparent: false,
+                    forceTheme: 'light',
+                },
+            },
+        });
+        const value2 = validateUserInterface({
+            id: '1',
+            config: {
+                forceTheme: 'dark',
+            },
+        });
+
+        expect(value2).toMatchObject({ isValidUI: true });
+        expect(value2).toMatchObject({
+            normalizedUI: {
+                id: '1',
+                config: {
+                    ripple: true,
+                    transparent: false,
+                    forceTheme: 'dark',
+                },
+            },
+        });
+        const value3 = validateUserInterface({
+            id: '1',
+            config: {
+                forceTheme: 'grey',
+            },
+        });
+
+        expect(value3).toMatchObject({ isValidUI: false });
+        expect(value3).toMatchObject({
+            errorUI: expect.stringMatching(
+                new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[light, dark\\]')
+            ),
+        });
+    });
 });
