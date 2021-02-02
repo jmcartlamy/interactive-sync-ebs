@@ -53,7 +53,7 @@ const mouseEventHandler = async function (req) {
     // Set cooldown for the current user
     registerUserCooldowns(opaqueUserId, {
         actionId: mouseType,
-        type: ACTIONS_TYPE.mouse,
+        type: mouseType,
         cooldownUI,
         DateNow,
     });
@@ -66,7 +66,7 @@ const mouseEventHandler = async function (req) {
         ...req.payload,
         username: username,
     };
-    sendMessageToClient(channelId, ACTIONS_TYPE.mouse, mousePayload);
+    sendMessageToClient(channelId, mouseType, mousePayload);
 
     // Log new mouse down action
     const coord = 'x: ' + clientX + ', y: ' + clientY;
