@@ -44,7 +44,7 @@ describe('user interface contains a correct `components[]` item object', () => {
         expect(value).toMatchObject({ isValidUI: false });
         expect(value).toMatchObject({
             errorUI: expect.stringMatching(
-                new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[title, button\\]')
+                new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[title, button, image\\]')
             ),
         });
     });
@@ -163,6 +163,43 @@ describe('user interface contains a correct `components[]` item object', () => {
 
         expect(value).toMatchObject({ isValidUI: true });
         expect(value).toMatchObject({ normalizedUI: data });
+    });
+    test('component contains a src property only if type is `image`', () => {
+        const data = {
+            id: '1',
+            panel: {
+                components: [
+                    {
+                        type: 'image',
+                        name: 'azerty',
+                        src: '$url$',
+                    },
+                ],
+            },
+        };
+        const value = validateUserInterface(data);
+
+        expect(value).toMatchObject({ isValidUI: true });
+        expect(value).toMatchObject({ normalizedUI: data });
+    });
+    test('component contains a src property which is required only if type is `image`', () => {
+        const data = {
+            id: '1',
+            panel: {
+                components: [
+                    {
+                        type: 'image',
+                        name: 'azerty',
+                    },
+                ],
+            },
+        };
+        const value = validateUserInterface(data);
+
+        expect(value).toMatchObject({ isValidUI: false });
+        expect(value).toMatchObject({
+            errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.required)),
+        });
     });
     test('component contains an alphanum keyCode', () => {
         const data = {

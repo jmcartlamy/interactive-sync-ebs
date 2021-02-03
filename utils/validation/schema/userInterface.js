@@ -9,12 +9,15 @@ const AUTHORIZED_STYLE = [
     'fontSize',
     'width',
     'height',
+    'maxWidth',
+    'maxHeight',
     'position',
     'display',
     'margin',
     'padding',
     'justifyContent',
     'alignItems',
+    'alignSelf',
     'borderImage',
     'imageRendering',
     'cursor',
@@ -32,25 +35,27 @@ const styleMouseSchema = Joi.object({
 });
 
 const extensionComponentSchema = Joi.object({
-    type: Joi.string().valid('title', 'input').required(),
+    type: Joi.string().valid('title', 'input', 'image').required(),
     name: Joi.string()
         .pattern(REGEX_ID_SPECIFICATION_HTML4)
         .min(3)
         .max(64)
         .when('type', { is: 'input', then: Joi.required() }),
     label: Joi.string().allow('').max(96),
+    src: Joi.string().max(128, 'utf8').when('type', { is: 'image', then: Joi.required() }),
     style: styleSchema,
     placeholder: Joi.string().allow('').max(32),
 });
 
 const componentSchema = Joi.object({
-    type: Joi.string().valid('title', 'button').required(),
+    type: Joi.string().valid('title', 'button', 'image').required(),
     name: Joi.string()
         .pattern(REGEX_ID_SPECIFICATION_HTML4)
         .min(3)
         .max(64)
         .when('type', { is: 'button', then: Joi.required() }),
     label: Joi.string().allow('').max(96).default('A label'),
+    src: Joi.string().max(128, 'utf8').when('type', { is: 'image', then: Joi.required() }),
     keyCode: Joi.string().alphanum().max(64),
     style: styleSchema,
     cooldown: Joi.object({

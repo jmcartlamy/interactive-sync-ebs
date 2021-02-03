@@ -45,7 +45,7 @@ describe('user interface contains a correct `components[].extension.components[]
         expect(value).toMatchObject({ isValidUI: false });
         expect(value).toMatchObject({
             errorUI: expect.stringMatching(
-                new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[title, input\\]')
+                new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[title, input, image\\]')
             ),
         });
     });
@@ -92,6 +92,37 @@ describe('user interface contains a correct `components[].extension.components[]
         );
 
         expect(value2).toMatchObject({ isValidUI: true });
+    });
+    test('component contains a src property only if type is `image`', () => {
+        const value = validateUserInterface(
+            insertExtensionComponents({
+                type: 'image',
+                name: 'azerty',
+                src: '$url$',
+            })
+        );
+
+        expect(value).toMatchObject({ isValidUI: true });
+        expect(value).toMatchObject({
+            normalizedUI: insertExtensionComponents({
+                type: 'image',
+                name: 'azerty',
+                src: '$url$',
+            }),
+        });
+    });
+    test('component contains a src property which is required only if type is `image`', () => {
+        const value = validateUserInterface(
+            insertExtensionComponents({
+                type: 'image',
+                name: 'azerty',
+            })
+        );
+
+        expect(value).toMatchObject({ isValidUI: false });
+        expect(value).toMatchObject({
+            errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.required)),
+        });
     });
     test('component allow an empty string for label', () => {
         const data = {
