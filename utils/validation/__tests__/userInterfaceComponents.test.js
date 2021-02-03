@@ -44,7 +44,7 @@ describe('user interface contains a correct `components[]` item object', () => {
         expect(value).toMatchObject({ isValidUI: false });
         expect(value).toMatchObject({
             errorUI: expect.stringMatching(
-                new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[title, button, image\\]')
+                new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[title, button, image, text\\]')
             ),
         });
     });
@@ -199,6 +199,49 @@ describe('user interface contains a correct `components[]` item object', () => {
         expect(value).toMatchObject({ isValidUI: false });
         expect(value).toMatchObject({
             errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.required)),
+        });
+        expect(value).toMatchObject({
+            errorUI: expect.stringMatching(new RegExp('panel.components\\[0\\].src')),
+        });
+    });
+    test('component contains a text property only if type is `text`', () => {
+        const data = {
+            id: '1',
+            panel: {
+                components: [
+                    {
+                        type: 'text',
+                        name: 'azertay',
+                        text: '$text$',
+                    },
+                ],
+            },
+        };
+        const value = validateUserInterface(data);
+
+        expect(value).toMatchObject({ isValidUI: true });
+        expect(value).toMatchObject({ normalizedUI: data });
+    });
+    test('component contains a text property which is required only if type is `text`', () => {
+        const data = {
+            id: '1',
+            panel: {
+                components: [
+                    {
+                        type: 'text',
+                        name: 'azertay',
+                    },
+                ],
+            },
+        };
+        const value = validateUserInterface(data);
+
+        expect(value).toMatchObject({ isValidUI: false });
+        expect(value).toMatchObject({
+            errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.required)),
+        });
+        expect(value).toMatchObject({
+            errorUI: expect.stringMatching(new RegExp('panel.components\\[0\\].text')),
         });
     });
     test('component contains an alphanum keyCode', () => {

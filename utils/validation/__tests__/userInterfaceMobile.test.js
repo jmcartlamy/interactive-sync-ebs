@@ -204,7 +204,7 @@ describe('user interface contains a correct mobile object', () => {
         expect(value).toMatchObject({ isValidUI: false });
         expect(value).toMatchObject({
             errorUI: expect.stringMatching(
-                new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[title, button, image\\]')
+                new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[title, button, image, text\\]')
             ),
         });
     });

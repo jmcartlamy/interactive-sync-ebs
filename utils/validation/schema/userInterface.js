@@ -35,7 +35,7 @@ const styleMouseSchema = Joi.object({
 });
 
 const extensionComponentSchema = Joi.object({
-    type: Joi.string().valid('title', 'input', 'image').required(),
+    type: Joi.string().valid('title', 'input', 'image', 'text').required(),
     name: Joi.string()
         .pattern(REGEX_ID_SPECIFICATION_HTML4)
         .min(3)
@@ -43,12 +43,13 @@ const extensionComponentSchema = Joi.object({
         .when('type', { is: 'input', then: Joi.required() }),
     label: Joi.string().allow('').max(96),
     src: Joi.string().max(128, 'utf8').when('type', { is: 'image', then: Joi.required() }),
+    text: Joi.string().max(256, 'utf8').when('type', { is: 'text', then: Joi.required() }),
     style: styleSchema,
     placeholder: Joi.string().allow('').max(32),
 });
 
 const componentSchema = Joi.object({
-    type: Joi.string().valid('title', 'button', 'image').required(),
+    type: Joi.string().valid('title', 'button', 'image', 'text').required(),
     name: Joi.string()
         .pattern(REGEX_ID_SPECIFICATION_HTML4)
         .min(3)
@@ -56,6 +57,7 @@ const componentSchema = Joi.object({
         .when('type', { is: 'button', then: Joi.required() }),
     label: Joi.string().allow('').max(96).default('A label'),
     src: Joi.string().max(128, 'utf8').when('type', { is: 'image', then: Joi.required() }),
+    text: Joi.string().max(256, 'utf8').when('type', { is: 'text', then: Joi.required() }),
     keyCode: Joi.string().alphanum().max(64),
     style: styleSchema,
     cooldown: Joi.object({

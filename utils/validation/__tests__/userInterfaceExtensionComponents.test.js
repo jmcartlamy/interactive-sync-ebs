@@ -45,7 +45,7 @@ describe('user interface contains a correct `components[].extension.components[]
         expect(value).toMatchObject({ isValidUI: false });
         expect(value).toMatchObject({
             errorUI: expect.stringMatching(
-                new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[title, input, image\\]')
+                new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[title, input, image, text\\]')
             ),
         });
     });
@@ -122,6 +122,47 @@ describe('user interface contains a correct `components[].extension.components[]
         expect(value).toMatchObject({ isValidUI: false });
         expect(value).toMatchObject({
             errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.required)),
+        });
+        expect(value).toMatchObject({
+            errorUI: expect.stringMatching(
+                new RegExp('panel.components\\[0\\].extension.components\\[0\\].src')
+            ),
+        });
+    });
+    test('component contains a text property only if type is `text`', () => {
+        const value = validateUserInterface(
+            insertExtensionComponents({
+                type: 'text',
+                name: 'azerty',
+                text: '$text$',
+            })
+        );
+
+        expect(value).toMatchObject({ isValidUI: true });
+        expect(value).toMatchObject({
+            normalizedUI: insertExtensionComponents({
+                type: 'text',
+                name: 'azerty',
+                text: '$text$',
+            }),
+        });
+    });
+    test('component contains a text property which is required only if type is `text`', () => {
+        const value = validateUserInterface(
+            insertExtensionComponents({
+                type: 'text',
+                name: 'azerty',
+            })
+        );
+
+        expect(value).toMatchObject({ isValidUI: false });
+        expect(value).toMatchObject({
+            errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.required)),
+        });
+        expect(value).toMatchObject({
+            errorUI: expect.stringMatching(
+                new RegExp('panel.components\\[0\\].extension.components\\[0\\].text')
+            ),
         });
     });
     test('component allow an empty string for label', () => {
