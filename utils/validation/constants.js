@@ -13,6 +13,7 @@ const JOI_VALIDATION_ERROR = {
     lessOrEqualLengthString: 'length must be less than or equal to',
     duplicate: 'contains a duplicate value',
     atLeastArray: 'must contain at least',
+    atLeastObject: 'must have at least',
     lessOrEqualArray: 'must contain less than or equal to',
     lessOrEqualObject: 'must have less than or equal to',
     notAllowed: 'is not allowed',

@@ -45,7 +45,7 @@ describe('user interface contains a correct `components[].extension.components[]
         expect(value).toMatchObject({ isValidUI: false });
         expect(value).toMatchObject({
             errorUI: expect.stringMatching(
-                new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[title, input, image, text\\]')
+                new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[title, input, image, text, radio\\]')
             ),
         });
     });
@@ -93,6 +93,106 @@ describe('user interface contains a correct `components[].extension.components[]
 
         expect(value2).toMatchObject({ isValidUI: true });
     });
+    test('component contains a name if type is `radio`', () => {
+        const value1 = validateUserInterface(
+            insertExtensionComponents({
+                type: 'radio',
+                design: 'classic',
+            })
+        );
+
+        expect(value1).toMatchObject({ isValidUI: false });
+        expect(value1).toMatchObject({
+            errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.required)),
+        });
+        const value2 = validateUserInterface(
+            insertExtensionComponents({
+                type: 'radio',
+                design: 'classic',
+                name: 'azerty',
+                values: { a: 'a' },
+            })
+        );
+        expect(value2).toMatchObject({ isValidUI: true });
+    });
+    test('component contains a design property with classic or button', () => {
+        const value = validateUserInterface(
+            insertExtensionComponents({
+                type: 'radio',
+                design: 'azerty',
+                name: 'azerty',
+                values: { a: 'a' },
+            })
+        );
+
+        expect(value).toMatchObject({ isValidUI: false });
+        expect(value).toMatchObject({
+            errorUI: expect.stringMatching(
+                new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[classic, button\\]')
+            ),
+        });
+    });
+    test('component contains a values property which is an array with min 1 / max 4', () => {
+        const value1 = validateUserInterface(
+            insertExtensionComponents({
+                type: 'radio',
+                design: 'classic',
+                name: 'azerty',
+                values: {},
+            })
+        );
+
+        expect(value1).toMatchObject({ isValidUI: false });
+        expect(value1).toMatchObject({
+            errorUI: expect.stringMatching(
+                new RegExp(JOI_VALIDATION_ERROR.atLeastObject + ' 1 key')
+            ),
+        });
+        const value2 = validateUserInterface(
+            insertExtensionComponents({
+                type: 'radio',
+                design: 'classic',
+                name: 'azerty',
+                values: { a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' },
+            })
+        );
+
+        expect(value2).toMatchObject({ isValidUI: false });
+        expect(value2).toMatchObject({
+            errorUI: expect.stringMatching(
+                new RegExp(JOI_VALIDATION_ERROR.lessOrEqualObject + ' 4 keys')
+            ),
+        });
+    });
+    test('component contains a design / values properties only if type is `radio`', () => {
+        const value1 = validateUserInterface(
+            insertExtensionComponents({
+                type: 'radio',
+                design: 'button',
+                name: 'azerty',
+            })
+        );
+
+        expect(value1).toMatchObject({ isValidUI: false });
+        expect(value1).toMatchObject({
+            errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.required)),
+        });
+        expect(value1).toMatchObject({
+            errorUI: expect.stringMatching(new RegExp('values')),
+        });
+        const value2 = validateUserInterface(
+            insertExtensionComponents({
+                type: 'radio',
+                name: 'azerty',
+                values: { a: 'a' },
+            })
+        );
+        expect(value2).toMatchObject({ isValidUI: false });
+        expect(value2).toMatchObject({
+            errorUI: expect.stringMatching(new RegExp('design')),
+        });
+    });
+
     test('component contains a src property only if type is `image`', () => {
         const value = validateUserInterface(
             insertExtensionComponents({
