@@ -44,7 +44,7 @@ const extensionComponentSchema = Joi.object({
     label: Joi.string().allow('').max(96),
     src: Joi.string().max(128, 'utf8').when('type', { is: 'image', then: Joi.required() }),
     text: Joi.string().max(256, 'utf8').when('type', { is: 'text', then: Joi.required() }),
-    design: Joi.string()
+    template: Joi.string()
         .valid('classic', 'button')
         .when('type', { is: 'radio', then: Joi.required() }),
     values: Joi.object()
@@ -53,6 +53,7 @@ const extensionComponentSchema = Joi.object({
         .max(4)
         .when('type', { is: 'radio', then: Joi.required() }),
     style: styleSchema,
+    styleValues: styleSchema.when('type', { not: 'radio', then: Joi.forbidden() }),
     placeholder: Joi.string().allow('').max(32),
 });
 

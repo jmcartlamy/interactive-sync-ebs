@@ -97,7 +97,7 @@ describe('user interface contains a correct `components[].extension.components[]
         const value1 = validateUserInterface(
             insertExtensionComponents({
                 type: 'radio',
-                design: 'classic',
+                template: 'classic',
             })
         );
 
@@ -108,18 +108,18 @@ describe('user interface contains a correct `components[].extension.components[]
         const value2 = validateUserInterface(
             insertExtensionComponents({
                 type: 'radio',
-                design: 'classic',
+                template: 'classic',
                 name: 'azerty',
                 values: { a: 'a' },
             })
         );
         expect(value2).toMatchObject({ isValidUI: true });
     });
-    test('component contains a design property with classic or button', () => {
+    test('component contains a template property with classic or button', () => {
         const value = validateUserInterface(
             insertExtensionComponents({
                 type: 'radio',
-                design: 'azerty',
+                template: 'azerty',
                 name: 'azerty',
                 values: { a: 'a' },
             })
@@ -136,7 +136,7 @@ describe('user interface contains a correct `components[].extension.components[]
         const value1 = validateUserInterface(
             insertExtensionComponents({
                 type: 'radio',
-                design: 'classic',
+                template: 'classic',
                 name: 'azerty',
                 values: {},
             })
@@ -151,7 +151,7 @@ describe('user interface contains a correct `components[].extension.components[]
         const value2 = validateUserInterface(
             insertExtensionComponents({
                 type: 'radio',
-                design: 'classic',
+                template: 'classic',
                 name: 'azerty',
                 values: { a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' },
             })
@@ -164,11 +164,11 @@ describe('user interface contains a correct `components[].extension.components[]
             ),
         });
     });
-    test('component contains a design / values properties only if type is `radio`', () => {
+    test('component contains a template / values properties only if type is `radio`', () => {
         const value1 = validateUserInterface(
             insertExtensionComponents({
                 type: 'radio',
-                design: 'button',
+                template: 'button',
                 name: 'azerty',
             })
         );
@@ -189,7 +189,7 @@ describe('user interface contains a correct `components[].extension.components[]
         );
         expect(value2).toMatchObject({ isValidUI: false });
         expect(value2).toMatchObject({
-            errorUI: expect.stringMatching(new RegExp('design')),
+            errorUI: expect.stringMatching(new RegExp('template')),
         });
     });
 
@@ -311,5 +311,33 @@ describe('user interface contains a correct `components[].extension.components[]
 
         expect(value).toMatchObject({ isValidUI: true });
         expect(value).toMatchObject({ normalizedUI: insertExtensionComponents(data) });
+    });
+    test('component contains a styleValues object only if type is radio', () => {
+        const data1 = {
+            type: 'radio',
+            name: 'name',
+            label: 'label',
+            template: 'button',
+            values: { a: 'a' },
+            styleValues: {},
+        };
+        const value1 = validateUserInterface(insertExtensionComponents(data1));
+
+        expect(value1).toMatchObject({ isValidUI: true });
+        expect(value1).toMatchObject({ normalizedUI: insertExtensionComponents(data1) });
+        const data2 = {
+            type: 'input',
+            name: 'name',
+            label: 'label',
+            template: 'button',
+            values: { a: 'a' },
+            styleValues: {},
+        };
+        const value2 = validateUserInterface(insertExtensionComponents(data2));
+
+        expect(value2).toMatchObject({ isValidUI: false });
+        expect(value2).toMatchObject({
+            errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.notAllowed)),
+        });
     });
 });
