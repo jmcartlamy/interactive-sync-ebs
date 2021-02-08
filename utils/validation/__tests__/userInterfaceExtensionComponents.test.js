@@ -45,7 +45,9 @@ describe('user interface contains a correct `components[].extension.components[]
         expect(value).toMatchObject({ isValidUI: false });
         expect(value).toMatchObject({
             errorUI: expect.stringMatching(
-                new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[title, input, image, text, radio\\]')
+                new RegExp(
+                    JOI_VALIDATION_ERROR.oneOf + ' \\[title, input, image, text, radio, checkbox\\]'
+                )
             ),
         });
     });
@@ -115,7 +117,29 @@ describe('user interface contains a correct `components[].extension.components[]
         );
         expect(value2).toMatchObject({ isValidUI: true });
     });
-    test('component contains a template property with classic or button', () => {
+    test('component contains a name if type is `checkbox`', () => {
+        const value1 = validateUserInterface(
+            insertExtensionComponents({
+                type: 'checkbox',
+                template: 'button',
+            })
+        );
+
+        expect(value1).toMatchObject({ isValidUI: false });
+        expect(value1).toMatchObject({
+            errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.required)),
+        });
+        const value2 = validateUserInterface(
+            insertExtensionComponents({
+                type: 'checkbox',
+                template: 'button',
+                name: 'azerty',
+                values: { a: 'a' },
+            })
+        );
+        expect(value2).toMatchObject({ isValidUI: true });
+    });
+    test('component contains a template property with classic or button if type is `radio`', () => {
         const value = validateUserInterface(
             insertExtensionComponents({
                 type: 'radio',
@@ -132,7 +156,24 @@ describe('user interface contains a correct `components[].extension.components[]
             ),
         });
     });
-    test('component contains a values property which is an array with min 1 / max 4', () => {
+    test('component contains a template property with classic or button if type is `checkbox`', () => {
+        const value = validateUserInterface(
+            insertExtensionComponents({
+                type: 'checkbox',
+                template: 'azerty',
+                name: 'azerty',
+                values: { a: 'a' },
+            })
+        );
+
+        expect(value).toMatchObject({ isValidUI: false });
+        expect(value).toMatchObject({
+            errorUI: expect.stringMatching(
+                new RegExp(JOI_VALIDATION_ERROR.oneOf + ' \\[classic, button\\]')
+            ),
+        });
+    });
+    test('component contains a values property which is an array with min 1 / max 4 if type is `radio`', () => {
         const value1 = validateUserInterface(
             insertExtensionComponents({
                 type: 'radio',
@@ -151,6 +192,38 @@ describe('user interface contains a correct `components[].extension.components[]
         const value2 = validateUserInterface(
             insertExtensionComponents({
                 type: 'radio',
+                template: 'classic',
+                name: 'azerty',
+                values: { a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' },
+            })
+        );
+
+        expect(value2).toMatchObject({ isValidUI: false });
+        expect(value2).toMatchObject({
+            errorUI: expect.stringMatching(
+                new RegExp(JOI_VALIDATION_ERROR.lessOrEqualObject + ' 4 keys')
+            ),
+        });
+    });
+    test('component contains a values property which is an array with min 1 / max 4 if type is `checkbox`', () => {
+        const value1 = validateUserInterface(
+            insertExtensionComponents({
+                type: 'checkbox',
+                template: 'classic',
+                name: 'azerty',
+                values: {},
+            })
+        );
+
+        expect(value1).toMatchObject({ isValidUI: false });
+        expect(value1).toMatchObject({
+            errorUI: expect.stringMatching(
+                new RegExp(JOI_VALIDATION_ERROR.atLeastObject + ' 1 key')
+            ),
+        });
+        const value2 = validateUserInterface(
+            insertExtensionComponents({
+                type: 'checkbox',
                 template: 'classic',
                 name: 'azerty',
                 values: { a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' },
@@ -183,6 +256,34 @@ describe('user interface contains a correct `components[].extension.components[]
         const value2 = validateUserInterface(
             insertExtensionComponents({
                 type: 'radio',
+                name: 'azerty',
+                values: { a: 'a' },
+            })
+        );
+        expect(value2).toMatchObject({ isValidUI: false });
+        expect(value2).toMatchObject({
+            errorUI: expect.stringMatching(new RegExp('template')),
+        });
+    });
+    test('component contains a template / values properties only if type is `checkbox`', () => {
+        const value1 = validateUserInterface(
+            insertExtensionComponents({
+                type: 'checkbox',
+                template: 'button',
+                name: 'azerty',
+            })
+        );
+
+        expect(value1).toMatchObject({ isValidUI: false });
+        expect(value1).toMatchObject({
+            errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.required)),
+        });
+        expect(value1).toMatchObject({
+            errorUI: expect.stringMatching(new RegExp('values')),
+        });
+        const value2 = validateUserInterface(
+            insertExtensionComponents({
+                type: 'checkbox',
                 name: 'azerty',
                 values: { a: 'a' },
             })
@@ -312,7 +413,7 @@ describe('user interface contains a correct `components[].extension.components[]
         expect(value).toMatchObject({ isValidUI: true });
         expect(value).toMatchObject({ normalizedUI: insertExtensionComponents(data) });
     });
-    test('component contains a styleValues object only if type is radio', () => {
+    test('component contains a styleValues object', () => {
         const data1 = {
             type: 'radio',
             name: 'name',
@@ -325,19 +426,5 @@ describe('user interface contains a correct `components[].extension.components[]
 
         expect(value1).toMatchObject({ isValidUI: true });
         expect(value1).toMatchObject({ normalizedUI: insertExtensionComponents(data1) });
-        const data2 = {
-            type: 'input',
-            name: 'name',
-            label: 'label',
-            template: 'button',
-            values: { a: 'a' },
-            styleValues: {},
-        };
-        const value2 = validateUserInterface(insertExtensionComponents(data2));
-
-        expect(value2).toMatchObject({ isValidUI: false });
-        expect(value2).toMatchObject({
-            errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.notAllowed)),
-        });
     });
 });

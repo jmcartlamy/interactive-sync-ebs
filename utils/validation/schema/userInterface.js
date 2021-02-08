@@ -35,25 +35,35 @@ const styleMouseSchema = Joi.object({
 });
 
 const extensionComponentSchema = Joi.object({
-    type: Joi.string().valid('title', 'input', 'image', 'text', 'radio').required(),
+    type: Joi.string().valid('title', 'input', 'image', 'text', 'radio', 'checkbox').required(),
     name: Joi.string()
         .pattern(REGEX_ID_SPECIFICATION_HTML4)
         .min(3)
         .max(64)
-        .when('type', { is: 'input', then: Joi.required() }, { is: 'radio', then: Joi.required() }),
+        .when('type', [
+            { is: 'input', then: Joi.required() },
+            { is: 'radio', then: Joi.required() },
+            { is: 'checkbox', then: Joi.required() },
+        ]),
     label: Joi.string().allow('').max(96),
     src: Joi.string().max(128, 'utf8').when('type', { is: 'image', then: Joi.required() }),
     text: Joi.string().max(256, 'utf8').when('type', { is: 'text', then: Joi.required() }),
     template: Joi.string()
         .valid('classic', 'button')
-        .when('type', { is: 'radio', then: Joi.required() }),
+        .when('type', [
+            { is: 'radio', then: Joi.required() },
+            { is: 'checkbox', then: Joi.required() },
+        ]),
     values: Joi.object()
         .pattern(Joi.string().alphanum().max(64), Joi.string().allow('').max(128, 'utf8'))
         .min(1)
         .max(4)
-        .when('type', { is: 'radio', then: Joi.required() }),
+        .when('type', [
+            { is: 'radio', then: Joi.required() },
+            { is: 'checkbox', then: Joi.required() },
+        ]),
     style: styleSchema,
-    styleValues: styleSchema.when('type', { not: 'radio', then: Joi.forbidden() }),
+    styleValues: styleSchema,
     placeholder: Joi.string().allow('').max(32),
 });
 
