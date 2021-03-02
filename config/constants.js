@@ -43,8 +43,8 @@ const WEBSOCKET = {
     started: 'WebSocket server running: %s',
     initError: 'An error occurred during socket initialization: %s',
     underlyingError: 'An error occurred: %s',
-    protocolMissing: 'Sec-websocket-protocol missing ; connection will be terminated.',
-    protocolIncomplete: 'ClientID or accessToken is missing ; connection will be terminated.',
+    queryParamsMissing: 'Query parameters are missing ; connection will be terminated.',
+    queryParamsIncomplete: 'ClientID or accessToken is missing ; connection will be terminated.',
     validateAccessTokenSuccess: 'Access token is valid for ip:%s.',
     validateAccessTokenError: 'An error occurred on token validation: ',
     undefinedUserId:

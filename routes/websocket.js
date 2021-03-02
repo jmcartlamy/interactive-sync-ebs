@@ -36,14 +36,14 @@ const onConnection = function () {
 
         const ip = req.socket.remoteAddress;
 
-        // Verify sec-websocket-protocol
-        if (!req.headers['sec-websocket-protocol']) {
-            verboseLog(WEBSOCKET.protocolMissing + ' | ip:' + ip);
+        // Verify query params
+        if (req.url === '' || req.url === '/' || !req.url) {
+            verboseLog(WEBSOCKET.queryParamsMissing + ' | ip:' + ip);
             ws.send(
                 JSON.stringify({
                     status: 'error',
                     context: 'connection',
-                    message: WEBSOCKET.protocolMissing,
+                    message: WEBSOCKET.queryParamsMissing,
                     data: null,
                 })
             );
@@ -51,15 +51,19 @@ const onConnection = function () {
         }
 
         // Get client_id and access_token
-        const [clientId, accessToken] = req.headers['sec-websocket-protocol'].split(', ');
+        const sanitizedURL = req.url.charAt('/') ? req.url.slice(1) : req.url;
+        const queryParams = new URLSearchParams(sanitizedURL);
+
+        const clientId = queryParams.get('client_id');
+        const accessToken = queryParams.get('access_token');
 
         if (!clientId || !accessToken) {
-            verboseLog(WEBSOCKET.protocolIncomplete + ' | ip:' + ip);
+            verboseLog(WEBSOCKET.queryParamsIncomplete + ' | ip:' + ip);
             ws.send(
                 JSON.stringify({
                     status: 'error',
                     context: 'connection',
-                    message: WEBSOCKET.protocolIncomplete,
+                    message: WEBSOCKET.queryParamsIncomplete,
                     data: null,
                 })
             );
@@ -139,6 +143,7 @@ const onConnection = function () {
         // ChannelID is the same ID than userId
         const channelId = userId;
         ws.channelId = channelId;
+        ws.clientId = clientId;
         webSockets[channelId] = ws;
 
         verboseLog(WEBSOCKET.connectionSuccessServer, channelId, displayName, ip);
@@ -156,6 +161,9 @@ const onConnection = function () {
 
         ws.on('message', async function incoming(message) {
             const channelId = ws.channelId;
+
+            // TODO verify SPAM or infinite loop
+
             // Test size of JSON
             if (message.length > 2048) {
                 verboseLog(WEBSOCKET.userInterfaceLengthErrorServer, ws.channelId);
