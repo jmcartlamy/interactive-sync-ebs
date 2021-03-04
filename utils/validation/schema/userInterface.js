@@ -85,10 +85,10 @@ const componentSchema = Joi.object({
         style: styleSchema,
     }).default({ duration: 10000, broadcast: true }),
     extension: Joi.object({
-        title: {
+        title: Joi.object({
             label: Joi.string().min(2).max(96),
             style: styleSchema,
-        },
+        }),
         submit: Joi.object({
             label: Joi.string().allow('').max(64).default('Submit'),
             style: styleSchema,
@@ -112,10 +112,10 @@ const userInterfaceSchema = Joi.object({
     id: Joi.string().alphanum().max(64).required(),
     config: configSchema,
     mobile: Joi.object({
-        title: {
+        title: Joi.object({
             label: Joi.string().min(2).max(96),
             style: styleSchema,
-        },
+        }),
         style: styleSchema,
         components: Joi.array().items(componentSchema).min(1).max(4).unique('name'),
     }),
