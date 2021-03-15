@@ -74,6 +74,17 @@ const WEBSOCKET = {
         'Channel c:%s: JSON received has an identical ID than the previous ; message is ignored.',
     undefinedChannelIdMessage:
         'For unknown reasons, channelID is undefined ; connection will be terminated.',
+    userInterfaceMaxRateExceeded:
+        'The time between your previous message and message received is too high ; message is ignored.',
+    userInterfaceMaxRateExceededServer:
+        'Channel c:%s: The time between your previous message and message received is too high ; message is ignored.',
+    userInterfaceWarningLimitExceeded:
+        'You have exceeded the warning limit ; connection will be terminated.',
+    userInterfaceWarningLimitExceededServer:
+        'Channel c:%s: You have exceeded the warning limit ; connection will be terminated.',
+    userInterfaceAvoidSpam: 'We have detected spam ; connection will be terminated.',
+    userInterfaceAvoidSpamServer:
+        'Channel c:%s: We have detected spam ; connection will be terminated.',
     messageError: 'Error during transfer to Twitch API: %s',
     messageSuccess: 'Message was well received and transfered to Twitch API.',
     messageSuccessServer: 'Channel c:%s: message received and transfered to Twitch API.',
@@ -87,6 +98,8 @@ const CONFIG = {
     userMouseEventCooldownMs: 1000, // maximum mouse event rate per user to prevent bot abuse
     userCooldownClearIntervalMs: 60000, // interval to reset our tracking object
     channelCooldownMs: 1000, // maximum broadcast rate per channel
+    wsMessageCooldownMs: 1000, // maximum message rate per channel
+    wsWarningNumberLimit: 5, // number of warning allowed before closing the websocket
     bearerPrefix: 'Bearer ',
     oauthPrefix: 'OAuth ',
 };

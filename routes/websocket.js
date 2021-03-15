@@ -1,7 +1,7 @@
 const WebSocket = require('ws');
 
 const apiTwitch = require('../services/twitch/api');
-const { WEBSOCKET } = require('../config/constants');
+const { CONFIG, WEBSOCKET } = require('../config/constants');
 const { verboseLog } = require('../config/log');
 const { getUserInterface, setUserInterface } = require('../db/state');
 const { validateUserInterface } = require('../utils/validation/validateUserInterface');
@@ -146,6 +146,10 @@ const onConnection = function () {
         ws.clientId = clientId;
         webSockets[channelId] = ws;
 
+        // Warn about spam / bot
+        ws.warningCount = 0;
+        ws.lastMessage = 0;
+
         verboseLog(WEBSOCKET.connectionSuccessServer, channelId, displayName, ip);
         ws.send(
             JSON.stringify({
@@ -161,47 +165,101 @@ const onConnection = function () {
 
         ws.on('message', async function incoming(message) {
             const channelId = ws.channelId;
+            const DateNow = Date.now();
 
-            // TODO verify SPAM or infinite loop
+            // Verify time between each message
+            if (ws.lastMessage + CONFIG.wsMessageCooldownMs > DateNow) {
+                // Verify spam / bot
+                if (ws.lastMessage + 100 > DateNow) {
+                    verboseLog(
+                        WEBSOCKET.userInterfaceAvoidSpamServer + ' | ip:' + ip,
+                        ws.channelId
+                    );
+                    ws.send(
+                        JSON.stringify({
+                            status: 'error',
+                            context: 'message',
+                            message: WEBSOCKET.userInterfaceAvoidSpam,
+                            data: null,
+                        })
+                    );
+                    return ws.terminate();
+                } else {
+                    ws.warningCount += 1;
+                    verboseLog(
+                        WEBSOCKET.userInterfaceMaxRateExceededServer + ' | ip:' + ip,
+                        ws.channelId
+                    );
+                    ws.send(
+                        JSON.stringify({
+                            status: 'warning',
+                            context: 'message',
+                            message: WEBSOCKET.userInterfaceMaxRateExceeded,
+                            data: null,
+                        })
+                    );
+                    if (ws.warningCount >= CONFIG.wsWarningNumberLimit) {
+                        onWarningNumberLimit(ws, ip);
+                    }
+                    return;
+                }
+            }
 
-            // Test size of JSON
+            ws.lastMessage = DateNow;
+
             if (message.length > 2048) {
+                // Test size of JSON
+                ws.warningCount += 1;
                 verboseLog(WEBSOCKET.userInterfaceLengthErrorServer, ws.channelId);
-                return ws.send(
+                ws.send(
                     JSON.stringify({
-                        status: 'error',
+                        status: 'warning',
                         context: 'message',
                         message: WEBSOCKET.userInterfaceLengthError,
                         data: null,
                     })
                 );
+                if (ws.warningCount >= CONFIG.wsWarningNumberLimit) {
+                    onWarningNumberLimit(ws, ip);
+                }
+                return;
             }
             // Get channelId from game
             let body;
             try {
                 body = JSON.parse(message);
             } catch (err) {
+                ws.warningCount += 1;
                 verboseLog(WEBSOCKET.userInterfaceSyntaxErrorServer, ws.channelId);
-                return ws.send(
+                ws.send(
                     JSON.stringify({
-                        status: 'error',
+                        status: 'warning',
                         context: 'message',
                         message: WEBSOCKET.userInterfaceSyntaxError,
                         data: null,
                     })
                 );
+                if (ws.warningCount >= CONFIG.wsWarningNumberLimit) {
+                    onWarningNumberLimit(ws, ip);
+                }
+                return;
             }
             // Test context and message
             if (!body.context || body.context !== 'user_interface' || !body.data) {
+                ws.warningCount += 1;
                 verboseLog(WEBSOCKET.messageIncompleteServer, ws.channelId);
-                return ws.send(
+                ws.send(
                     JSON.stringify({
-                        status: 'error',
+                        status: 'warning',
                         context: 'message',
                         message: WEBSOCKET.messageIncomplete,
                         data: null,
                     })
                 );
+                if (ws.warningCount >= CONFIG.wsWarningNumberLimit) {
+                    onWarningNumberLimit(ws, ip);
+                }
+                return;
             }
 
             // Verify channelId still exist
@@ -222,24 +280,30 @@ const onConnection = function () {
             const { isValidUI, normalizedUI, errorUI } = validateUserInterface(body.data);
 
             if (!isValidUI) {
+                ws.warningCount += 1;
                 verboseLog(WEBSOCKET.userInterfaceInvalidServer + ' | ip:' + ip, ws.channelId);
-                return ws.send(
+                ws.send(
                     JSON.stringify({
-                        status: 'error',
+                        status: 'warning',
                         context: 'message',
                         message: WEBSOCKET.userInterfaceInvalid,
                         data: errorUI,
                     })
                 );
+                if (ws.warningCount >= CONFIG.wsWarningNumberLimit) {
+                    onWarningNumberLimit(ws, ip);
+                }
+                return;
             }
 
             // Verify new UI's ID is not identical to previous UI's ID
             const userInterface = getUserInterface(channelId);
             if (userInterface && userInterface.id === body.data.id) {
+                ws.warningCount += 1;
                 verboseLog(WEBSOCKET.userInterfaceSameIdServer + ' | ip:' + ip, ws.channelId);
-                return ws.send(
+                ws.send(
                     JSON.stringify({
-                        status: 'error',
+                        status: 'warning',
                         context: 'message',
                         message: WEBSOCKET.userInterfaceSameId,
                         data: {
@@ -248,6 +312,10 @@ const onConnection = function () {
                         },
                     })
                 );
+                if (ws.warningCount >= CONFIG.wsWarningNumberLimit) {
+                    onWarningNumberLimit(ws, ip);
+                }
+                return;
             }
 
             // Set user interface in state
@@ -347,6 +415,19 @@ const sendMessageToClient = function (channelId, type, payload) {
             );
         }
     });
+};
+
+const onWarningNumberLimit = function (ws, ip) {
+    verboseLog(WEBSOCKET.userInterfaceWarningLimitExceededServer + ' | ip:' + ip, ws.channelId);
+    ws.send(
+        JSON.stringify({
+            status: 'error',
+            context: 'message',
+            message: WEBSOCKET.userInterfaceWarningLimitExceeded,
+            data: { limit: CONFIG.wsWarningNumberLimit },
+        })
+    );
+    return ws.terminate();
 };
 
 module.exports = {
