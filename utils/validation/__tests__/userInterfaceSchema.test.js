@@ -13,7 +13,6 @@ describe('user interface is fully correct', () => {
                         type: 'button',
                         name: 'action-zombie',
                         label: 'Créer un zombie',
-                        keyCode: 'Digit1',
                         cooldown: {
                             duration: 5000,
                             broadcast: true,
@@ -23,7 +22,6 @@ describe('user interface is fully correct', () => {
                         type: 'button',
                         name: 'action-ninja',
                         label: 'Créer un ninja',
-                        keyCode: 'Digit2',
                         cooldown: {
                             duration: 10000,
                             broadcast: false,
@@ -41,7 +39,6 @@ describe('user interface is fully correct', () => {
                         type: 'button',
                         name: 'action-zombie',
                         label: 'Créer un zombie',
-                        keyCode: 'Digit1',
                         cooldown: {
                             duration: 5000,
                             broadcast: true,
@@ -51,7 +48,6 @@ describe('user interface is fully correct', () => {
                         type: 'button',
                         name: 'action-ninja',
                         label: 'Créer un ninja',
-                        keyCode: 'Digit2',
                         cooldown: {
                             duration: 10000,
                             broadcast: false,
@@ -83,7 +79,6 @@ describe('user interface is fully correct', () => {
                             type: 'button',
                             name: 'action-zombie',
                             label: 'Créer un zombie',
-                            keyCode: 'Digit1',
                             cooldown: {
                                 duration: 5000,
                                 broadcast: true,
@@ -93,7 +88,6 @@ describe('user interface is fully correct', () => {
                             type: 'button',
                             name: 'action-ninja',
                             label: 'Créer un ninja',
-                            keyCode: 'Digit2',
                             cooldown: {
                                 duration: 10000,
                                 broadcast: false,
@@ -120,7 +114,6 @@ describe('user interface is fully correct', () => {
                         type: 'button',
                         name: 'action-rebel',
                         label: 'Créer un rebelle',
-                        keyCode: 'Digit1',
                         extension: {
                             title: {
                                 label: 'Créer un REBELLE',
@@ -154,7 +147,6 @@ describe('user interface is fully correct', () => {
                         type: 'button',
                         name: 'action-rebel',
                         label: 'Créer un rebelle',
-                        keyCode: 'Digit1',
                         extension: {
                             title: {
                                 label: 'Créer un REBELLE',
@@ -193,7 +185,6 @@ describe('user interface is fully correct', () => {
                             type: 'button',
                             name: 'action-rebel',
                             label: 'Créer un rebelle',
-                            keyCode: 'Digit1',
                             extension: {
                                 title: {
                                     label: 'Créer un REBELLE',
@@ -245,7 +236,6 @@ describe('user interface is fully correct', () => {
                             type: 'button',
                             name: 'action-rebel',
                             label: 'Créer un rebelle',
-                            keyCode: 'Digit1',
                             extension: {
                                 title: {
                                     label: 'Créer un REBELLE',

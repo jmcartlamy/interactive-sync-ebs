@@ -77,7 +77,6 @@ const componentSchema = Joi.object({
     label: Joi.string().allow('').max(96).default('A label'),
     src: Joi.string().max(128, 'utf8').when('type', { is: 'image', then: Joi.required() }),
     text: Joi.string().max(256, 'utf8').when('type', { is: 'text', then: Joi.required() }),
-    keyCode: Joi.string().alphanum().max(64),
     style: styleSchema,
     cooldown: Joi.object({
         duration: Joi.number().min(3000).max(60000).default(10000),

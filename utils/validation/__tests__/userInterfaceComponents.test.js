@@ -244,26 +244,6 @@ describe('user interface contains a correct `components[]` item object', () => {
             errorUI: expect.stringMatching(new RegExp('panel.components\\[0\\].text')),
         });
     });
-    test('component contains an alphanum keyCode', () => {
-        const data = {
-            id: '1',
-            panel: {
-                components: [
-                    {
-                        type: 'title',
-                        name: 'name',
-                        keyCode: '$123$',
-                    },
-                ],
-            },
-        };
-        const value = validateUserInterface(data);
-
-        expect(value).toMatchObject({ isValidUI: false });
-        expect(value).toMatchObject({
-            errorUI: expect.stringMatching(new RegExp(JOI_VALIDATION_ERROR.alphanum)),
-        });
-    });
     test('component contains a style object', () => {
         const data = {
             id: '1',
