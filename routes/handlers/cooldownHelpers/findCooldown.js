@@ -23,7 +23,11 @@ const findCooldownByViewAndActionId = function (view, channelId, actionId) {
 };
 
 const _findCooldown = function (actionId, userInterfaceView) {
-    if (userInterfaceView.components && userInterfaceView.components.length !== 0) {
+    if (
+        userInterfaceView &&
+        userInterfaceView.components &&
+        userInterfaceView.components.length !== 0
+    ) {
         const result = userInterfaceView.components.find(function (item) {
             return (
                 item.name === actionId &&
