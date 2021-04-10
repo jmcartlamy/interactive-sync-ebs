@@ -207,7 +207,8 @@ const onConnection = function () {
 
             ws.lastMessage = DateNow;
 
-            if (message.length > 2048) {
+            // Length user interface (2048) + length message (46)
+            if (message.length > 2094) {
                 // Test size of JSON
                 ws.warningCount += 1;
                 verboseLog(WEBSOCKET.userInterfaceLengthErrorServer, ws.channelId);

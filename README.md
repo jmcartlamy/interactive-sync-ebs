@@ -29,4 +29,5 @@ As you set environment variables, open a new terminal, install dependencies and 
 |---------|-------------|
 | `yarn install` | Install back-end dependencies |
 | `yarn start` | Run extensions backend service |
+| `yarn test` | Run tests |
 
