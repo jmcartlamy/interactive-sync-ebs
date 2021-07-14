@@ -1,6 +1,7 @@
 const WebSocket = require('ws');
 
 const apiTwitch = require('../services/twitch/api');
+const containerAzure = require('../services/azure/container');
 const { CONFIG, WEBSOCKET } = require('../config/constants');
 const { verboseLog } = require('../config/log');
 const { getUserInterface, setUserInterface } = require('../db/state');
@@ -64,6 +65,36 @@ const onConnection = function () {
                     status: 'error',
                     context: 'connection',
                     message: WEBSOCKET.queryParamsIncomplete,
+                    data: null,
+                })
+            );
+            return ws.terminate();
+        }
+
+        // Check in the blacklist if a match exists with client_id
+        try {
+            const body = await containerAzure.retrieveBlacklist();
+
+            if (body.blacklist && body.blacklist.length) {
+                const clientIdIsBlacklisted = body.blacklist.find(function (item) {
+                    return item === clientId;
+                });
+                if (clientIdIsBlacklisted) {
+                    throw {
+                        message: WEBSOCKET.clientIdBlacklisted,
+                        clientId: clientIdIsBlacklisted,
+                    };
+                }
+                verboseLog(WEBSOCKET.clientIdVerificationSuccess, ip);
+            }
+        } catch (err) {
+            //prettier-ignore
+            verboseLog(WEBSOCKET.clientIdVerificationError + err.message + ' ' + (err.clientId || '') + ' | ip:' + ip);
+            ws.send(
+                JSON.stringify({
+                    status: 'error',
+                    context: 'connection',
+                    message: WEBSOCKET.clientIdVerificationError + err.message,
                     data: null,
                 })
             );

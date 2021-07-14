@@ -16,7 +16,7 @@ const getOption = function (optionName, environmentName) {
         process.exit(1);
     })();
 
-    if (!['secret', 'clientId', 'clientSecret'].includes(optionName)) {
+    if (!['secret', 'clientId', 'clientSecret', 'blacklistUri'].includes(optionName)) {
         console.log(`Using "${option}" for ${optionName}`);
     }
     return option;
@@ -26,5 +26,6 @@ module.exports = {
     secret: Buffer.from(getOption('secret', 'EXT_SHARED_SECRET'), 'base64'),
     clientId: getOption('clientId', 'EXT_CLIENT_ID'),
     clientSecret: getOption('clientSecret', 'EXT_CLIENT_SECRET'),
+    blacklistUri: getOption('blacklistUri', 'EXT_BLACKLIST_URI'),
     verboseLogging: true, // @TODO set to env,
 };

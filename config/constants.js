@@ -12,11 +12,13 @@ const SERVER = {
     clientIdEnv: usingValue('client-id'),
     clientSecretEnv: usingValue('client-secret'),
     ownerIdEnv: usingValue('owner-id'),
+    blacklistUriEnv: usingValue('blacklist-uri'),
     serverStarted: 'Server running at %s',
     secretMissing: missingValue('secret', 'EXT_SECRET'),
     clientIdMissing: missingValue('client ID', 'EXT_CLIENT_ID'),
     clientSecretMissing: missingValue('client secret', 'EXT_SHARED_SECRET'),
     ownerIdMissing: missingValue('owner ID', 'EXT_OWNER_ID'),
+    blacklistUriMissing: missingValue('blacklist uri', 'EXT_BLACKLIST_URI'),
 };
 
 const API_TWITCH = {
@@ -47,6 +49,9 @@ const WEBSOCKET = {
     queryParamsIncomplete: 'ClientID or accessToken is missing ; connection will be terminated.',
     validateAccessTokenSuccess: 'Access token is valid for ip:%s.',
     validateAccessTokenError: 'An error occurred on token validation: ',
+    clientIdVerificationSuccess: 'ClientID is authorized for ip:%s.',
+    clientIdVerificationError: 'An error occurred on ClientID verification: ',
+    clientIdBlacklisted: 'Application is blacklisted.',
     undefinedUserId:
         'We cant find user_id with your token. It must be an user access token retrieved with implitit code flow or authorization code flow.',
     retrieveUserObjectSuccess: 'Receive u:%s details with ip:%s.',
@@ -90,6 +95,11 @@ const WEBSOCKET = {
     messageSuccessServer: 'Channel c:%s: message received and transfered to Twitch API.',
 };
 
+const AZURE = {
+    retrieveBlacklistError: 'Error to get blacklist.json: %s',
+    retrieveBlacklistSuccess: 'Blacklist received: status %s',
+};
+
 const CONFIG = {
     serverTokenDurationSec: 30, // our tokens for pubsub expire after 30 seconds
     inputCooldownMs: 3000, // minimum cooldown to prevent bot abuse
@@ -108,5 +118,6 @@ module.exports = {
     SERVER: SERVER,
     API_TWITCH: API_TWITCH,
     WEBSOCKET: WEBSOCKET,
+    AZURE: AZURE,
     CONFIG: CONFIG,
 };
