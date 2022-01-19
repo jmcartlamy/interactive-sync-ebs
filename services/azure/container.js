@@ -23,10 +23,14 @@ const retrieveBlacklist = function () {
                     reject(err);
                 } else {
                     const response = res.toJSON();
-                    const body = JSON.parse(response.body);
-                    verboseLog(AZURE.retrieveBlacklistSuccess, res.statusCode);
-
-                    resolve(body);
+                    try {
+                        const body = JSON.parse(response.body);
+                        verboseLog(AZURE.retrieveBlacklistSuccess, res.statusCode);
+                        resolve(body);
+                    } catch (err) {
+                        verboseLog(AZURE.retrieveBlacklistError, err);
+                        reject(err);
+                    }
                 }
             }
         );

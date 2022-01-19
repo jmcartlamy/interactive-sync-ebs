@@ -59,10 +59,13 @@ const validateAccessToken = function (_headers = {}) {
                 if (err) {
                     reject(err);
                 } else {
-                    const response = res.toJSON();
-                    const body = JSON.parse(response.body);
-
-                    resolve(body);
+                    try {
+                        const response = res.toJSON();
+                        const body = JSON.parse(response.body);
+                        resolve(body);
+                    } catch (err) {
+                        reject(err);
+                    }
                 }
             }
         );
@@ -88,10 +91,13 @@ const retrieveUserObject = function (query, _headers = {}) {
                 if (err) {
                     reject(err);
                 } else {
-                    const response = res.toJSON();
-                    const body = JSON.parse(response.body);
-
-                    resolve(body);
+                    try {
+                        const response = res.toJSON();
+                        const body = JSON.parse(response.body);
+                        resolve(body);
+                    } catch (err) {
+                        reject(err);
+                    }
                 }
             }
         );
@@ -117,10 +123,13 @@ const searchChannels = function (query, _headers = {}) {
                 if (err) {
                     reject(err);
                 } else {
-                    const response = res.toJSON();
-                    const body = JSON.parse(response.body);
-
-                    resolve(body);
+                    try {
+                        const response = res.toJSON();
+                        const body = JSON.parse(response.body);
+                        resolve(body);
+                    } catch (err) {
+                        reject(err);
+                    }
                 }
             }
         );

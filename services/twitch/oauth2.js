@@ -19,11 +19,16 @@ const retrieveTokens = function () {
                     reject(err);
                 } else {
                     const response = res.toJSON();
-                    const body = JSON.parse(response.body);
-                    setTokens(body);
+                    try {
+                        const body = JSON.parse(response.body);
+                        setTokens(body);
 
-                    verboseLog(API_TWITCH.retrieveTokenSuccess, res.statusCode);
-                    resolve(body);
+                        verboseLog(API_TWITCH.retrieveTokenSuccess, res.statusCode);
+                        resolve(body);
+                    } catch (err) {
+                        verboseLog(API_TWITCH.retrieveTokenError, err);
+                        reject(err);
+                    }
                 }
             }
         );
