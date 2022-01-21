@@ -171,6 +171,29 @@ const onConnection = function () {
             return ws.terminate();
         }
 
+        // Set the broadcaster configuration segment for the extension (we send the host name)
+        try {
+            const headers = { clientId, token: accessToken };
+
+            const body = await apiTwitch.setExtensionConfiguration(userId, headers);
+            if (body.statusCode !== 204) {
+                // API returns error
+                throw body;
+            }
+            verboseLog(WEBSOCKET.setExtensionConfigurationSuccess, userId);
+        } catch (err) {
+            verboseLog(WEBSOCKET.setExtensionConfigurationError + err.message + ' | ip:' + ip);
+            ws.send(
+                JSON.stringify({
+                    status: 'error',
+                    context: 'connection',
+                    message: WEBSOCKET.setExtensionConfigurationError + err.message,
+                    data: null,
+                })
+            );
+            return ws.terminate();
+        }
+
         // ChannelID is the same ID than userId
         const channelId = userId;
         ws.channelId = channelId;

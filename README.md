@@ -15,6 +15,7 @@ EXT_CLIENT_ID=YOUR_CLIENT_ID
 EXT_CLIENT_SECRET=YOUR_CLIENT_SECRET
 EXT_SHARED_SECRET=YOUR_SHARED_SECRET
 EXT_OWNER_ID=YOUR_OWNER_ID
+EXT_HOST=YOUR_HOST
 EXT_BLACKLIST_URI=YOUR_BLACKLIST_URI
 ```
 
@@ -26,9 +27,8 @@ As you set environment variables, open a new terminal, install dependencies and 
 
 ## Available Commands
 
-| Command | Description |
-|---------|-------------|
-| `yarn install` | Install back-end dependencies |
-| `yarn start` | Run extensions backend service |
-| `yarn test` | Run tests |
-
+| Command        | Description                    |
+| -------------- | ------------------------------ |
+| `yarn install` | Install back-end dependencies  |
+| `yarn start`   | Run extensions backend service |
+| `yarn test`    | Run tests                      |

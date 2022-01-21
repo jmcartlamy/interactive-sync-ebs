@@ -3,7 +3,7 @@ const request = require('request');
 const { makeServerToken } = require('./helpers/makeServerToken');
 const { getAccessToken } = require('./token');
 const { CONFIG, API_TWITCH } = require('../../config/constants');
-const { clientId } = require('../../config/env');
+const { clientId, host } = require('../../config/env');
 const { verboseLog } = require('../../config/log');
 
 const sendBroadcastMessage = function (channelId, message) {
@@ -136,9 +136,52 @@ const searchChannels = function (query, _headers = {}) {
     });
 };
 
+const setExtensionConfiguration = function (channelId, _headers = {}) {
+    verboseLog(API_TWITCH.setExtensionConfigurationRequest, channelId);
+
+    // Set the headers required by the Twitch API.
+    const headers = {
+        'Client-ID': clientId,
+        'Content-Type': 'application/json',
+        Authorization: CONFIG.bearerPrefix + makeServerToken(channelId),
+    };
+
+    // Create the body for the Twitch API request.
+    const body = JSON.stringify({
+        channel_id: channelId,
+        segment: 'broadcaster',
+        content: JSON.stringify({ host }),
+    });
+
+    return new Promise(function (resolve, reject) {
+        request(
+            `https://api.twitch.tv/extensions/${clientId}/configurations`,
+            {
+                method: 'PUT',
+                headers,
+                body,
+            },
+            (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const response = res.toJSON();
+                    try {
+                        const body = response.body ? JSON.parse(response.body) : response;
+                        resolve(body);
+                    } catch (err) {
+                        resolve(response);
+                    }
+                }
+            }
+        );
+    });
+};
+
 module.exports = {
     sendBroadcastMessage: sendBroadcastMessage,
     validateAccessToken: validateAccessToken,
     retrieveUserObject: retrieveUserObject,
     searchChannels: searchChannels,
+    setExtensionConfiguration: setExtensionConfiguration,
 };

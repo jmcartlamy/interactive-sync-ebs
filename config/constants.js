@@ -12,12 +12,14 @@ const SERVER = {
     clientIdEnv: usingValue('client-id'),
     clientSecretEnv: usingValue('client-secret'),
     ownerIdEnv: usingValue('owner-id'),
+    hostEnv: usingValue('host'),
     blacklistUriEnv: usingValue('blacklist-uri'),
     serverStarted: 'Server running at %s',
     secretMissing: missingValue('secret', 'EXT_SECRET'),
     clientIdMissing: missingValue('client ID', 'EXT_CLIENT_ID'),
     clientSecretMissing: missingValue('client secret', 'EXT_SHARED_SECRET'),
     ownerIdMissing: missingValue('owner ID', 'EXT_OWNER_ID'),
+    hostMissing: missingValue('host', 'EXT_HOST'),
     blacklistUriMissing: missingValue('blacklist uri', 'EXT_BLACKLIST_URI'),
 };
 
@@ -39,6 +41,9 @@ const API_TWITCH = {
     validateAccessTokenRequest: 'Validate access token from id.twitch/oauth2',
     validateAccessTokenError: 'Error status %s: %s',
     validateAccessTokenSuccess: 'Access token is valid: status %s',
+    setExtensionConfigurationRequest: 'Sets the single configuration segment for c:%s',
+    setExtensionConfigurationError: 'Error to set configuration on c:%s',
+    setExtensionConfigurationSuccess: 'Extension configuration applied: status %s',
 };
 
 const WEBSOCKET = {
@@ -56,6 +61,8 @@ const WEBSOCKET = {
         'We cant find user_id with your token. It must be an user access token retrieved with implitit code flow or authorization code flow.',
     retrieveUserObjectSuccess: 'Receive u:%s details with ip:%s.',
     retrieveUserObjectError: 'An error occurred to retrieve user details: ',
+    setExtensionConfigurationSuccess: 'Extension configuration applied for c:%s.',
+    setExtensionConfigurationError: 'An error occurred to set extension configuration: ',
     undefinedChannelId: 'We cant find channel_id with the user_id ; connection will be terminated.',
     connectionSuccess: 'You are well connected with the channel',
     connectionSuccessServer: 'Channel c:%s with user named "%s" connected with ip:%s',
