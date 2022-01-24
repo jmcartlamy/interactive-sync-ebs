@@ -22,7 +22,6 @@ const getOption = function (optionName, environmentName) {
     return option;
 };
 module.exports = {
-    ownerId: getOption('ownerId', 'EXT_OWNER_ID'),
     host: getOption('host', 'EXT_HOST'),
     secret: Buffer.from(getOption('secret', 'EXT_SHARED_SECRET'), 'base64'),
     clientId: getOption('clientId', 'EXT_CLIENT_ID'),
