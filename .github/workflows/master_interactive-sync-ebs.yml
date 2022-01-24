@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy - interactive-sync-ebs
+name: Build and test - interactive-sync-ebs
 
 on:
   push:
@@ -9,7 +6,7 @@ on:
       - master
 
 jobs:
-  build-and-deploy:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,11 +24,3 @@ jobs:
     - name: Run tests
       run: |
         yarn jest
-
-    - name: 'Deploy to Azure Web App'
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'interactive-sync-ebs'
-        slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_0578de7ace924289a0290009b5922e1e }}
-        package: .
