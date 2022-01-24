@@ -1,7 +1,6 @@
 {
     "name": "interactive-sync-ebs",
-    "version": "0.1.0-alpha.3",
-    "private": true,
+    "version": "0.2.0-alpha",
     "description": "",
     "main": "index.js",
     "scripts": {
